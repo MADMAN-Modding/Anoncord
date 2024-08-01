@@ -14,7 +14,7 @@ int main()
       std::string command = event.command.get_command_name();
          if (command == "anon") {
             bot.message_create(dpp::message(event.command.channel_id, std::get<std::string>(event.get_parameter("message"))));
-            event.cancel_event();
+            event.reply(dpp::message("Anonymous message sent: " + std::get<std::string>(event.get_parameter("message"))).set_flags(dpp::m_ephemeral));
          }
       }
    );

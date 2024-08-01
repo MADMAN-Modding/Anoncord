@@ -9,30 +9,32 @@ int main()
 
    bot.on_log(dpp::utility::cout_logger());
 
-   bot.on_slashcommand([](const dpp::slashcommand_t &event)
+   bot.on_slashcommand([&bot](const dpp::slashcommand_t &event)
       {
       std::string command = event.command.get_command_name();
          if (command == "anon") {
-            event.reply(std::get<std::string>(event.get_parameter("message")));
+            bot.message_create(dpp::message(event.command.channel_id, std::get<std::string>(event.get_parameter("message"))));
+            event.cancel_event();
          }
       }
    );
 
    bot.on_ready([&bot](const dpp::ready_t &event)
       {
-         bot.global_bulk_command_delete();
          if (dpp::run_once<struct register_bot_commands>())
          {
             // Makes the commands
-            dpp::slashcommand anon_command("anon-msg", "Enter a message to be anonymously sent", bot.me.id);
+            dpp::slashcommand anon_command("anon", "Enter a message to be anonymously sent", bot.me.id);
             
             // Encoding commands
             anon_command.add_option(
                   dpp::command_option(dpp::co_string, "message", "The message to anonymously send", true));
-            
+
+            bot.global_bulk_command_delete();
             // Creates the commands 
             bot.global_command_create(anon_command);
-         } });
+         }
+      });
    bot.start(dpp::st_wait);
 
    return 0;

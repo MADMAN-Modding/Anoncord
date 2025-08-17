@@ -14,7 +14,7 @@ int main()
    bot.on_slashcommand([&bot](const dpp::slashcommand_t &event)
                        {
       string command = event.command.get_command_name();
-         if (command == "anon") {
+         if (command == "anon" || command == "guild_anon") {
             string msg = get<string>(event.get_parameter("message"));
 
             dpp::embed embed = dpp::embed()
@@ -91,13 +91,18 @@ int main()
          if (dpp::run_once<struct register_bot_commands>())
          {
             // Makes the commands
-            dpp::slashcommand global_anon_command("anon", "Enter a message to be anonymously sent", bot.me.id);
+            dpp::slashcommand global_anon_command("anon", "Enter a vent to be anonymously sent", bot.me.id);
             
             // Encoding commands
             global_anon_command.add_option(
-                  dpp::command_option(dpp::co_string, "message", "The message to anonymously send", true));
+                  dpp::command_option(dpp::co_string, "message", "The vent to anonymously send", true)
+            );
 
             dpp::slashcommand guild_anon_command("guild_anon", "Enter a vent to be anonymously snet", bot.me.id);
+
+            guild_anon_command.add_option(
+               dpp::command_option(dpp::co_string, "message", "The vent to be anonymously sent", true)
+            );
 
             // bot.global_bulk_command_delete();
             // Creates the commands 

@@ -13,8 +13,13 @@ int main()
       {
       std::string command = event.command.get_command_name();
          if (command == "anon") {
-            bot.message_create(dpp::message(event.command.channel_id, std::get<std::string>(event.get_parameter("message"))));
-            event.reply(dpp::message("Anonymous message sent: " + std::get<std::string>(event.get_parameter("message"))).set_flags(dpp::m_ephemeral));
+            dpp::embed embed = dpp::embed()
+               .set_color(dpp::colors::red_blood)
+               .set_title("Anonymous vent")
+               .set_description(std::get<std::string>(event.get_parameter("message")));
+
+            bot.message_create(dpp::message(event.command.channel_id, embed));
+            event.reply(dpp::message("Only you can see this.\nAnonymous message sent: " + std::get<std::string>(event.get_parameter("message"))).set_flags(dpp::m_ephemeral));
          }
       }
    );

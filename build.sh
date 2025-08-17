@@ -1,0 +1,1 @@
+g++ -std=c++17 -o bot src/main.cpp -ldpp

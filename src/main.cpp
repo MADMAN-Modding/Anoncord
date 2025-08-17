@@ -34,14 +34,14 @@ int main()
                dpp::snowflake vent_id = sent_msg.id; // message ID is always a snowflake
 
                // Ephemeral confirmation
-               dpp::message reply_msg("Only you can see this.\nAnonymous message sent: " + msg);
+               dpp::message reply_msg("Only you can see this.");
                reply_msg.set_flags(dpp::m_ephemeral);
                event.reply(reply_msg);
 
                // Direct message with delete button
                dpp::embed direct_embed = dpp::embed()
                   .set_color(dpp::colors::red_blood)
-                  .set_title("Hey there!")
+                  .set_title("Anoncord Message Deletion Services")
                   .set_description("If you'd like to delete your vent, use the button below:\n" + msg);
 
                dpp::component delete_button;

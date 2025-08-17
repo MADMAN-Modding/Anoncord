@@ -33,8 +33,6 @@ int main()
                const dpp::message& sent_msg = get<dpp::message>(callback.value);
                dpp::snowflake vent_id = sent_msg.id; // message ID is always a snowflake
 
-               cout << "Vent ID: " << vent_id << "\n";
-
                // Ephemeral confirmation
                dpp::message reply_msg("Only you can see this.\nAnonymous message sent: " + msg);
                reply_msg.set_flags(dpp::m_ephemeral);
@@ -65,8 +63,6 @@ int main()
       string command = event.custom_id;
 
       if (command.find("delete") != string::npos) {
-         cout << "Command: " << command << "\n";
-
          // Find the first underscore
          int split = command.find("_");
 
@@ -95,16 +91,18 @@ int main()
          if (dpp::run_once<struct register_bot_commands>())
          {
             // Makes the commands
-            dpp::slashcommand anon_command("anon", "Enter a message to be anonymously sent", bot.me.id);
+            dpp::slashcommand global_anon_command("anon", "Enter a message to be anonymously sent", bot.me.id);
             
             // Encoding commands
-            anon_command.add_option(
+            global_anon_command.add_option(
                   dpp::command_option(dpp::co_string, "message", "The message to anonymously send", true));
+
+            dpp::slashcommand guild_anon_command("guild_anon", "Enter a vent to be anonymously snet", bot.me.id);
 
             // bot.global_bulk_command_delete();
             // Creates the commands 
-            bot.global_bulk_command_create({anon_command});
-            // bot.guild_bulk_command_delete(1338708878702940244);
+            bot.global_bulk_command_create({global_anon_command});
+            bot.guild_command_create(guild_anon_command, 1338708878702940244);
          } });
    bot.start(dpp::st_wait);
 

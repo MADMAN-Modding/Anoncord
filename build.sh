@@ -1,1 +1,5 @@
-g++ -std=c++17 -o bot src/main.cpp -ldpp
+cmake -S . -B build
+
+cmake --build build --config Release
+
+mv build/Anoncord bot

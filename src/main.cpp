@@ -1,6 +1,7 @@
 #include <dpp/dpp.h>
 #include "include/private.hpp"
 #include <iostream>
+#include "private_vents.cpp"
 
 using namespace std;
 
@@ -13,6 +14,11 @@ int main()
 
    bot.on_slashcommand([&bot](const dpp::slashcommand_t &event)
                        {
+                        PrivateVents privateVents(bot);
+
+
+                        privateVents.dmAccepted(1, 1);
+
       string command = event.command.get_command_name();
          if (command == "anon" || command == "guild_anon") {
             string msg = get<string>(event.get_parameter("message"));
@@ -59,7 +65,7 @@ int main()
    } });
 
    bot.on_button_click([&bot](const dpp::button_click_t &event)
-   {
+                       {
       string command = event.custom_id;
 
       if (command.find("delete") != string::npos) {
@@ -83,8 +89,7 @@ int main()
          bot.message_delete(msg_id, channel_id);
 
          event.reply("Your anonymous message has been deleted.");
-      }
-   });
+      } });
 
    bot.on_ready([&bot](const dpp::ready_t &event)
                 {
@@ -92,22 +97,24 @@ int main()
          {
             // Makes the commands
             dpp::slashcommand global_anon_command("anon", "Enter a vent to be anonymously sent", bot.me.id);
-            
-            // Encoding commands
             global_anon_command.add_option(
                   dpp::command_option(dpp::co_string, "message", "The vent to anonymously send", true)
             );
 
-            dpp::slashcommand guild_anon_command("guild_anon", "Enter a vent to be anonymously snet", bot.me.id);
 
+            dpp::slashcommand guild_anon_command("guild_anon", "Enter a vent to be anonymously snet", bot.me.id);
             guild_anon_command.add_option(
                dpp::command_option(dpp::co_string, "message", "The vent to be anonymously sent", true)
             );
 
-            // bot.global_bulk_command_delete();
+
+            dpp::slashcommand dm_command("private_dm", "Anonymously DM a user", bot.me.id);
+            dm_command.add_option(dpp::command_option(dpp::co_user, "user", "The user to request to dm"));
+            dm_command.add_option(dpp::command_option(dpp::co_string, "message", "The message request to be made"));
+
             // Creates the commands 
-            bot.global_bulk_command_create({global_anon_command});
-            bot.guild_command_create(guild_anon_command, 1338708878702940244);
+            bot.global_bulk_command_create({global_anon_command, dm_command});
+            bot.guild_bulk_command_create({guild_anon_command}, 1338708878702940244);
          } });
    bot.start(dpp::st_wait);
 

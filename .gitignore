@@ -2,3 +2,4 @@ private.hpp
 build/
 .vscode
 bot
+.cache

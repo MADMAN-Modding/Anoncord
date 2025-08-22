@@ -1,5 +1,8 @@
 #include <dpp/dpp.h>
 
+#ifndef PRIVATE_VENTS_HPP
+#define PRIVATE_VENTS_HPP
+
 using namespace std;
 using namespace dpp;
 
@@ -23,25 +26,11 @@ public:
     void dmAccepted(int userID, int anonUserID);
 
 private:
-    /// @brief Makes an embed to be sent to the user
-    /// @param title Embed's title
-    /// @param description Embed's description
-    /// @param color Embed's color (use dpp::colors)
-    /// @return Embed made from supplied values
-    embed makeEmbed(string title, string description, uint32_t color);
-
-    /// @brief Makes a button to be attached to an embed
-    /// @param label Button's label
-    /// @param style Button's style
-    /// @param id Button's id
-    /// @return Button made from supplied values
-    component makeButton(string label, component_style style, string id);
-
     /// @brief Sends a DM to the anonymous to inform that their DM request was accepted or rejected
     /// @param accepted True if excepted, false if rejected
     /// @param userID ID of the requested user
     /// @param anonUserID ID of the anonymous user
     void responseDM(bool accepted, int userID, int anonUserID);
-
-    string str_tolower(string s);
 };
+
+#endif

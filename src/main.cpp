@@ -1,7 +1,7 @@
 #include <dpp/dpp.h>
-#include "include/private.hpp"
+#include "private.hpp"
 #include <iostream>
-#include "private_vents.cpp"
+#include "private_vents.h"
 
 using namespace std;
 

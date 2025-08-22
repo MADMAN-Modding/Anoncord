@@ -1,5 +1,5 @@
 #include <dpp/dpp.h>
-#include "private.hpp"
+#include "private.h"
 #include <iostream>
 #include "private_vents.h"
 

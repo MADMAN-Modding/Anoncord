@@ -1,6 +1,6 @@
 #include "private_vents.h"
 #include <format>
-#include "utilites.h"
+#include "utilities.h"
 
 PrivateVents::PrivateVents(cluster *bot) : bot(bot) {}
 

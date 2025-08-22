@@ -1,4 +1,4 @@
-#include "utilites.h"
+#include "utilities.h"
 
 embed makeEmbed(string title, string description,
                               uint32_t color)

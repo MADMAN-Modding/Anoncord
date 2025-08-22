@@ -10,14 +10,14 @@ int main()
 {
    dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 
+   PrivateVents privateVents(&bot);
+
+
    bot.on_log(dpp::utility::cout_logger());
 
    bot.on_slashcommand([&bot](const dpp::slashcommand_t &event)
                        {
-                        PrivateVents privateVents(bot);
 
-
-                        privateVents.dmAccepted(1, 1);
 
       string command = event.command.get_command_name();
          if (command == "anon" || command == "guild_anon") {

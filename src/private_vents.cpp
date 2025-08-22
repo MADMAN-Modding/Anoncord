@@ -1,8 +1,9 @@
-#include "private_vents.hpp"
+#include "include/private_vents.h"
+#include <format>
 
-PrivateVents::PrivateVents(cluster &bot) : bot(bot) {}
+PrivateVents::PrivateVents(cluster *bot) : bot(bot) {}
 
-void PrivateVents::sendDM(int userID, string description, cluster &bot)
+void PrivateVents::sendDM(int userID, string description)
 {
   // Makes the separate parts of the message
   const embed embed =
@@ -21,17 +22,25 @@ void PrivateVents::sendDM(int userID, string description, cluster &bot)
       .add_component(rejectButton);
 
   // Sends the message to the user
-  bot.direct_message_create(userID, message);
+  bot->direct_message_create(userID, message);
 }
 
 void PrivateVents::dmAccepted(int userID, int anonUserID)
 {
   // Makes the separate parts of the message
-  const string message = "<@" + to_string(userID) + ">";
+  const string description = "<@" + to_string(userID) + ">";
 
+  // Makes the embed
   embed embed;
-  embed = makeEmbed("Requested Accepted!", message + "accepted your request!",
+  embed = makeEmbed("Requested Accepted!", description + "accepted your request!",
                     dpp::colors::green);
+
+  // Makes the message to be sent
+  dpp::message message;
+  message.add_embed(embed);
+
+  // Sends the message to the anonymous user
+  bot->direct_message_create(anonUserID, message);
 }
 
 embed PrivateVents::makeEmbed(string title, string description,
@@ -50,4 +59,34 @@ component PrivateVents::makeButton(string label, dpp::component_style style,
   button.set_type(cot_button).set_label(label).set_style(style).set_id(id);
 
   return button;
-};
+}
+
+void PrivateVents::responseDM(bool accepted, int userID, int anonUserID) {
+  string statusText = accepted ? "Accepted" : "Rejected";
+
+  // Makes the separate parts of the message
+  const string description = "<@" + to_string(userID) + ">";
+
+  // Makes the embed
+  embed embed;
+  embed = makeEmbed("Requested " + statusText + " !", str_tolower(statusText) + " your request!",
+                    dpp::colors::green);
+
+  // Makes the message to be sent
+  dpp::message message;
+  message.add_embed(embed);
+
+  // Sends the message to the anonymous user
+  bot->direct_message_create(anonUserID, message);
+}
+
+string PrivateVents::str_tolower(string s)
+{
+    std::transform(s.begin(), s.end(), s.begin(),
+                // static_cast<int(*)(int)>(std::tolower)         // wrong
+                // [](int c){ return std::tolower(c); }           // wrong
+                // [](char c){ return std::tolower(c); }          // wrong
+                   [](unsigned char c){ return std::tolower(c); } // correct
+                  );
+    return s;
+}

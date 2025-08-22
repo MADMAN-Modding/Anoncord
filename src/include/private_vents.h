@@ -6,17 +6,16 @@ using namespace dpp;
 class PrivateVents
 {
 public:
-    cluster& bot;
+    cluster* bot;
 
     /// @brief Constructor for PrivateVents class
     /// @param bot Reference to bot object
-    PrivateVents(cluster& bot);
+    PrivateVents(cluster* bot);
 
     /// @brief Sends a DM to the specified user asking if they can DM with an anonymous user
     /// @param userID ID of the user to be DMed
     /// @param message Message to send the user to ask them
-    /// @param bot Reference to the bot object to send DMs
-    void sendDM(int userID, string message, cluster& bot);
+    void sendDM(int userID, string message);
 
     /// @brief Sends a DM to the dm requester that their request has been accepted
     /// @param userID ID of the requested user
@@ -33,8 +32,16 @@ private:
 
     /// @brief Makes a button to be attached to an embed
     /// @param label Button's label
-    /// @param style
-    /// @param id
+    /// @param style Button's style
+    /// @param id Button's id
     /// @return Button made from supplied values
     component makeButton(string label, component_style style, string id);
+
+    /// @brief Sends a DM to the anonymous to inform that their DM request was accepted or rejected
+    /// @param accepted True if excepted, false if rejected
+    /// @param userID ID of the requested user
+    /// @param anonUserID ID of the anonymous user
+    void responseDM(bool accepted, int userID, int anonUserID);
+
+    string str_tolower(string s);
 };

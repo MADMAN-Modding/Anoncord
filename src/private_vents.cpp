@@ -1,22 +1,22 @@
 #include "private_vents.h"
 #include "utilities.h"
 
-PrivateVents::PrivateVents(cluster *bot) : bot(bot) {}
+PrivateVents::PrivateVents(dpp::cluster *bot) : bot(bot) {}
 
-void PrivateVents::sendDM(snowflake userID, snowflake anonUserID, string description)
+void PrivateVents::sendDM(dpp::snowflake userID, dpp::snowflake anonUserID, string description)
 {
 
   cout << userID << "\n";
 
   // Makes the separate parts of the message
-  const embed embed =
+  const dpp::embed embed =
       makeEmbed("You've been sent a DM request!", description, userID);
-  const component acceptButton =
-      makeButton("Accept DM", component_style::cos_primary,
+  const dpp::component acceptButton =
+      makeButton("Accept DM", dpp::component_style::cos_primary,
         "accept-dm_" + to_string(userID) + "_" + to_string(anonUserID));
-        const component rejectButton =
-      makeButton("Reject DM", component_style::cos_danger,
-                 "reject-dm_" + to_string(userID));
+        const dpp::component rejectButton =
+      makeButton("Reject DM", dpp::component_style::cos_danger,
+                 "reject-dm_" + to_string(userID) + "_" + to_string(anonUserID));
 
   // Creates the message
   dpp::message message;
@@ -28,26 +28,26 @@ void PrivateVents::sendDM(snowflake userID, snowflake anonUserID, string descrip
   bot->direct_message_create(userID, message);
 }
 
-void PrivateVents::dmAccepted(snowflake userID, snowflake anonUserID)
+void PrivateVents::dmAccepted(dpp::snowflake userID, dpp::snowflake anonUserID)
 {
-  responseDM(true, userID, anonUserID);
+  responseDM(true, userID, anonUserID, dpp::colors::green);
 }
 
-void PrivateVents::dmRejected(snowflake userID, snowflake anonUserID)
+void PrivateVents::dmRejected(dpp::snowflake userID, dpp::snowflake anonUserID)
 {
-  responseDM(false, userID, anonUserID);
+  responseDM(false, userID, anonUserID, dpp::colors::red);
 }
 
-void PrivateVents::responseDM(bool accepted, snowflake userID, snowflake anonUserID) {
+void PrivateVents::responseDM(bool accepted, dpp::snowflake userID, dpp::snowflake anonUserID, uint32_t color) {
   string statusText = accepted ? "Accepted" : "Rejected";
 
   // Makes the separate parts of the message
-  const string description = "<@" + to_string(userID) + ">";
+  const string user = "<@" + to_string(userID) + "> ";
 
   // Makes the embed
-  embed embed;
-  embed = makeEmbed("Requested " + statusText + " !", strToLower(statusText) + " your request!",
-                    dpp::colors::green);
+  dpp::embed embed;
+  embed = makeEmbed("Requested " + statusText + "!", user + strToLower(statusText) + " your request!",
+                    color);
 
   // Makes the message to be sent
   dpp::message message;

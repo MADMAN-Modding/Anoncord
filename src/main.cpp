@@ -2,6 +2,7 @@
 #include "private.h"
 #include <iostream>
 #include "private_vents.h"
+#include "utilities.h"
 
 using namespace std;
 
@@ -64,7 +65,7 @@ int main()
                bot.direct_message_create(event.command.member.user_id, direct_msg);
             });
    } else if (command == "private_dm") {
-      snowflake userID = get<snowflake>(event.get_parameter("user"));
+      dpp::snowflake userID = get<dpp::snowflake>(event.get_parameter("user"));
 
       cout << userID << "\n";
 
@@ -72,7 +73,7 @@ int main()
 
       cout << message << "\n";
 
-      snowflake anonUserID = event.command.member.user_id;
+      dpp::snowflake anonUserID = event.command.member.user_id;
       
       privateVents.sendDM(userID, anonUserID, message);
 
@@ -87,17 +88,14 @@ int main()
       string command = event.custom_id;
 
       if (command.find("delete") != string::npos) {
-         // Find the first underscore
-         int split = command.find("_");
-
-         // Find the second underscore
-         int split2 = command.find("_", split + 1);
+         // Find all the parts
+         vector<string> parts = splitString(command, '_');
 
          // Find the message_id from using the splits
-         string msgID = command.substr(split + 1, split2 - split - 1);
+         string msgID = parts[1];
 
          // Find the channelID from using the splits
-         string channelID = command.substr(split2 + 1);
+         string channelID = parts[2];
 
          // Commenting these for debug purposes
          // cout << "Msg ID: " << msgID << "\n";
@@ -108,26 +106,33 @@ int main()
 
          event.reply("Your anonymous message has been deleted.");
       } else if (command.find("accept-dm_") != string::npos) {
-         // Find the first underscore
-         int split = command.find("_");
-
-         // Find the second underscore
-         int split2 = command.find("_", split + 1);
+         // Find all the parts
+         vector<string> parts = splitString(command, '_');
 
          // Find the userID from using the splits
-         snowflake userID = stoull(command.substr(split + 1, split2 - split - 1));
-
-         cout << userID << "\n";
+         dpp::snowflake userID = stoull(parts[1]);
 
          // Find the anonUserID from using the splits
-         snowflake anonUserID = stoull(command.substr(split2 + 1));
+         dpp::snowflake anonUserID = stoull(parts[2]);
 
-         cout << anonUserID << "\n";
-
-         event.reply(to_string(userID) + "_" + to_string(anonUserID));
+         event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
 
          // Send the message to the anon user that the dm was accepted
          privateVents.dmAccepted(userID, anonUserID);
+      } else if (command.find("reject-dm_") != string::npos) {
+         // Find all the parts
+         vector<string> parts = splitString(command, '_');
+
+         // Find the userID from using the splits
+         dpp::snowflake userID = stoull(parts[1]);
+
+         // Find the anonUserID from using the splits
+         dpp::snowflake anonUserID = stoull(parts[2]);
+
+         event.reply(dpp::message("DM Rejected").set_flags(dpp::m_ephemeral));
+
+         // Send the message to the anon user that the dm was accepted
+         privateVents.dmRejected(userID, anonUserID);
       } });
 
    bot.on_ready([&bot](const dpp::ready_t &event)

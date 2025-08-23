@@ -5,38 +5,38 @@
 
 using namespace std;
 
-class PrivateVents
+class private_vents
 {
 public:
-    dpp::cluster* bot;
+    dpp::cluster *bot;
 
-    /// @brief Constructor for PrivateVents class
+    /// @brief Constructor for private_vents class
     /// @param bot Reference to bot object
-    PrivateVents(dpp::cluster* bot);
+    private_vents(dpp::cluster *bot);
 
     /// @brief Sends a DM to the specified user asking if they can DM with an anonymous user
-    /// @param userID ID of the user to be DMed
-    /// @param anonUserID ID of the DM requester
+    /// @param user_id ID of the user to be DMed
+    /// @param anon_user_id ID of the DM requester
     /// @param message Message to send the user to ask them
-    void sendDM(dpp::snowflake userID, dpp::snowflake anonUserID, string message);
+    void send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id, string message);
 
     /// @brief Sends a DM to the dm requester that their request has been accepted
-    /// @param userID ID of the requested user
-    /// @param anonUserID ID of the anonymous user
-    void dmAccepted(dpp::snowflake userID, dpp::snowflake anonUserID);
+    /// @param user_id ID of the requested user
+    /// @param anon_user_id ID of the anonymous user
+    void dm_accepted(dpp::snowflake user_id, dpp::snowflake anon_user_id);
 
     /// @brief Sends a DM to the dm requesters that their request has been denied
-    /// @param userID ID of the requested user
-    /// @param anonUserID ID of the anonymous user
-    void dmRejected(dpp::snowflake userID, dpp::snowflake anonUserID);
+    /// @param user_id ID of the requested user
+    /// @param anon_user_id ID of the anonymous user
+    void dm_rejected(dpp::snowflake user_id, dpp::snowflake anon_user_id);
 
 private:
     /// @brief Sends a DM to the anonymous to inform that their DM request was accepted or rejected
     /// @param accepted True if excepted, false if rejected
-    /// @param userID ID of the requested user
-    /// @param anonUserID ID of the anonymous user
+    /// @param user_id ID of the requested user
+    /// @param anon_user_id ID of the anonymous user
     /// @param color Embed's color (use dpp::colors)
-    void responseDM(bool accepted, dpp::snowflake userID, dpp::snowflake anonUserID, uint32_t color);
+    void response_dm(bool accepted, dpp::snowflake user_id, dpp::snowflake anon_user_id, uint32_t color);
 };
 
 #endif

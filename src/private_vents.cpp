@@ -1,58 +1,59 @@
 #include "private_vents.h"
 #include "utilities.h"
 
-PrivateVents::PrivateVents(dpp::cluster *bot) : bot(bot) {}
+private_vents::private_vents(dpp::cluster *bot) : bot(bot) {}
 
-void PrivateVents::sendDM(dpp::snowflake userID, dpp::snowflake anonUserID, string description)
+void private_vents::send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id, string description)
 {
 
-  cout << userID << "\n";
+  cout << user_id << "\n";
 
   // Makes the separate parts of the message
   const dpp::embed embed =
-      makeEmbed("You've been sent a DM request!", description, userID);
-  const dpp::component acceptButton =
-      makeButton("Accept DM", dpp::component_style::cos_primary,
-        "accept-dm_" + to_string(userID) + "_" + to_string(anonUserID));
-        const dpp::component rejectButton =
-      makeButton("Reject DM", dpp::component_style::cos_danger,
-                 "reject-dm_" + to_string(userID) + "_" + to_string(anonUserID));
+      make_embed("You've been sent a DM request!", description, user_id);
+  const dpp::component accept_button =
+      make_button("Accept DM", dpp::component_style::cos_primary,
+                  "accept-dm_" + to_string(user_id) + "_" + to_string(anon_user_id));
+  const dpp::component reject_button =
+      make_button("Reject DM", dpp::component_style::cos_danger,
+                  "reject-dm_" + to_string(user_id) + "_" + to_string(anon_user_id));
 
   // Creates the message
   dpp::message message;
   message.add_embed(embed)
-      .add_component(dpp::component().add_component(acceptButton))
-      .add_component(dpp::component().add_component(rejectButton));
+      .add_component(dpp::component().add_component(accept_button))
+      .add_component(dpp::component().add_component(reject_button));
 
   // Sends the message to the user
-  bot->direct_message_create(userID, message);
+  bot->direct_message_create(user_id, message);
 }
 
-void PrivateVents::dmAccepted(dpp::snowflake userID, dpp::snowflake anonUserID)
+void private_vents::dm_accepted(dpp::snowflake user_id, dpp::snowflake anon_user_id)
 {
-  responseDM(true, userID, anonUserID, dpp::colors::green);
+  response_dm(true, user_id, anon_user_id, dpp::colors::green);
 }
 
-void PrivateVents::dmRejected(dpp::snowflake userID, dpp::snowflake anonUserID)
+void private_vents::dm_rejected(dpp::snowflake user_id, dpp::snowflake anon_user_id)
 {
-  responseDM(false, userID, anonUserID, dpp::colors::red);
+  response_dm(false, user_id, anon_user_id, dpp::colors::red);
 }
 
-void PrivateVents::responseDM(bool accepted, dpp::snowflake userID, dpp::snowflake anonUserID, uint32_t color) {
-  string statusText = accepted ? "Accepted" : "Rejected";
+void private_vents::response_dm(bool accepted, dpp::snowflake user_id, dpp::snowflake anon_user_id, uint32_t color)
+{
+  string status_text = accepted ? "Accepted" : "Rejected";
 
   // Makes the separate parts of the message
-  const string user = "<@" + to_string(userID) + "> ";
+  const string user = "<@" + to_string(user_id) + "> ";
 
   // Makes the embed
   dpp::embed embed;
-  embed = makeEmbed("Requested " + statusText + "!", user + strToLower(statusText) + " your request!",
-                    color);
+  embed = make_embed("Requested " + status_text + "!", user + str_to_lower(status_text) + " your request!",
+                     color);
 
   // Makes the message to be sent
   dpp::message message;
   message.add_embed(embed);
 
   // Sends the message to the anonymous user
-  bot->direct_message_create(anonUserID, message);
+  bot->direct_message_create(anon_user_id, message);
 }

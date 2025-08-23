@@ -11,9 +11,7 @@ int main()
 {
    dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 
-   PrivateVents privateVents(&bot);
-
-
+   private_vents privateVents(&bot);
 
    bot.on_log(dpp::utility::cout_logger());
 
@@ -65,17 +63,17 @@ int main()
                bot.direct_message_create(event.command.member.user_id, direct_msg);
             });
    } else if (command == "private_dm") {
-      dpp::snowflake userID = get<dpp::snowflake>(event.get_parameter("user"));
+      dpp::snowflake user_id = get<dpp::snowflake>(event.get_parameter("user"));
 
-      cout << userID << "\n";
+      cout << user_id << "\n";
 
       string message = get<string>(event.get_parameter("message"));
 
       cout << message << "\n";
 
-      dpp::snowflake anonUserID = event.command.member.user_id;
+      dpp::snowflake anon_user_id = event.command.member.user_id;
       
-      privateVents.sendDM(userID, anonUserID, message);
+      privateVents.send_dm(user_id, anon_user_id, message);
 
       dpp::message reply("DM Sent");
       reply.set_flags(dpp::m_ephemeral);
@@ -89,50 +87,50 @@ int main()
 
       if (command.find("delete") != string::npos) {
          // Find all the parts
-         vector<string> parts = splitString(command, '_');
+         vector<string> parts = split_string(command, '_');
 
          // Find the message_id from using the splits
-         string msgID = parts[1];
+         string msg_id = parts[1];
 
-         // Find the channelID from using the splits
-         string channelID = parts[2];
+         // Find the channel_id from using the splits
+         string channel_id = parts[2];
 
          // Commenting these for debug purposes
-         // cout << "Msg ID: " << msgID << "\n";
-         // cout << "Channel ID: " << channelID << "\n";
+         // cout << "Msg ID: " << msg_id << "\n";
+         // cout << "Channel ID: " << channel_id << "\n";
 
          // Find the message with the given ID and delete it
-         bot.message_delete(msgID, channelID);
+         bot.message_delete(msg_id, channel_id);
 
          event.reply("Your anonymous message has been deleted.");
       } else if (command.find("accept-dm_") != string::npos) {
          // Find all the parts
-         vector<string> parts = splitString(command, '_');
+         vector<string> parts = split_string(command, '_');
 
-         // Find the userID from using the splits
-         dpp::snowflake userID = stoull(parts[1]);
+         // Find the user_id from using the splits
+         dpp::snowflake user_id = stoull(parts[1]);
 
-         // Find the anonUserID from using the splits
-         dpp::snowflake anonUserID = stoull(parts[2]);
+         // Find the anon_user_id from using the splits
+         dpp::snowflake anon_user_id = stoull(parts[2]);
 
          event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
 
          // Send the message to the anon user that the dm was accepted
-         privateVents.dmAccepted(userID, anonUserID);
+         privateVents.dm_accepted(user_id, anon_user_id);
       } else if (command.find("reject-dm_") != string::npos) {
          // Find all the parts
-         vector<string> parts = splitString(command, '_');
+         vector<string> parts = split_string(command, '_');
 
-         // Find the userID from using the splits
-         dpp::snowflake userID = stoull(parts[1]);
+         // Find the user_id from using the splits
+         dpp::snowflake user_id = stoull(parts[1]);
 
-         // Find the anonUserID from using the splits
-         dpp::snowflake anonUserID = stoull(parts[2]);
+         // Find the anon_user_id from using the splits
+         dpp::snowflake anon_user_id = stoull(parts[2]);
 
          event.reply(dpp::message("DM Rejected").set_flags(dpp::m_ephemeral));
 
          // Send the message to the anon user that the dm was accepted
-         privateVents.dmRejected(userID, anonUserID);
+         privateVents.dm_rejected(user_id, anon_user_id);
       } });
 
    bot.on_ready([&bot](const dpp::ready_t &event)

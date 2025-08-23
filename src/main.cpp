@@ -13,9 +13,10 @@ int main()
    PrivateVents privateVents(&bot);
 
 
+
    bot.on_log(dpp::utility::cout_logger());
 
-   bot.on_slashcommand([&bot](const dpp::slashcommand_t &event)
+   bot.on_slashcommand([&bot, &privateVents](const dpp::slashcommand_t &event)
                        {
 
 
@@ -62,9 +63,26 @@ int main()
 
                bot.direct_message_create(event.command.member.user_id, direct_msg);
             });
+   } else if (command == "private_dm") {
+      snowflake userID = get<snowflake>(event.get_parameter("user"));
+
+      cout << userID << "\n";
+
+      string message = get<string>(event.get_parameter("message"));
+
+      cout << message << "\n";
+
+      snowflake anonUserID = event.command.member.user_id;
+      
+      privateVents.sendDM(userID, anonUserID, message);
+
+      dpp::message reply("DM Sent");
+      reply.set_flags(dpp::m_ephemeral);
+
+      event.reply(reply);
    } });
 
-   bot.on_button_click([&bot](const dpp::button_click_t &event)
+   bot.on_button_click([&bot, &privateVents](const dpp::button_click_t &event)
                        {
       string command = event.custom_id;
 
@@ -76,19 +94,40 @@ int main()
          int split2 = command.find("_", split + 1);
 
          // Find the message_id from using the splits
-         string msg_id = command.substr(split + 1, split2 - split - 1);
+         string msgID = command.substr(split + 1, split2 - split - 1);
 
-         // Find the channel_id from using the splits
-         string channel_id = command.substr(split2 + 1);
+         // Find the channelID from using the splits
+         string channelID = command.substr(split2 + 1);
 
          // Commenting these for debug purposes
-         // cout << "Msg ID: " << msg_id << "\n";
-         // cout << "Channel ID: " << channel_id << "\n";
+         // cout << "Msg ID: " << msgID << "\n";
+         // cout << "Channel ID: " << channelID << "\n";
 
          // Find the message with the given ID and delete it
-         bot.message_delete(msg_id, channel_id);
+         bot.message_delete(msgID, channelID);
 
          event.reply("Your anonymous message has been deleted.");
+      } else if (command.find("accept-dm_") != string::npos) {
+         // Find the first underscore
+         int split = command.find("_");
+
+         // Find the second underscore
+         int split2 = command.find("_", split + 1);
+
+         // Find the userID from using the splits
+         snowflake userID = stoull(command.substr(split + 1, split2 - split - 1));
+
+         cout << userID << "\n";
+
+         // Find the anonUserID from using the splits
+         snowflake anonUserID = stoull(command.substr(split2 + 1));
+
+         cout << anonUserID << "\n";
+
+         event.reply(to_string(userID) + "_" + to_string(anonUserID));
+
+         // Send the message to the anon user that the dm was accepted
+         privateVents.dmAccepted(userID, anonUserID);
       } });
 
    bot.on_ready([&bot](const dpp::ready_t &event)

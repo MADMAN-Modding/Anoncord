@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 # Project name, version and description
 project(Anoncord VERSION 1.0 DESCRIPTION "An anonymous discord messaging bot")
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-    
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake) 
 
 # Add executable
 add_executable(${PROJECT_NAME}
@@ -35,3 +34,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

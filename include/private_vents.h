@@ -1,7 +1,5 @@
+#pragma once
 #include <dpp/dpp.h>
-
-#ifndef PRIVATE_VENTS_HPP
-#define PRIVATE_VENTS_HPP
 
 using namespace std;
 
@@ -11,7 +9,7 @@ public:
     dpp::cluster *bot;
 
     /// @brief Constructor for private_vents class
-    /// @param bot Reference to bot object
+    /// @param bot Pointer to bot object
     private_vents(dpp::cluster *bot);
 
     /// @brief Sends a DM to the specified user asking if they can DM with an anonymous user
@@ -38,5 +36,3 @@ private:
     /// @param color Embed's color (use dpp::colors)
     void response_dm(bool accepted, dpp::snowflake user_id, dpp::snowflake anon_user_id, uint32_t color);
 };
-
-#endif

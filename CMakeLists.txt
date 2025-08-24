@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/private_vents.cpp
     src/utilities.cpp
+    src/event_handlers/slash_commands.cpp
 )    
 
 # Find our pre-installed DPP package (using FindDPP.cmake).
@@ -27,6 +28,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     "include/"
+    "include/event_handlers"
 )
     
 # Set C++ version

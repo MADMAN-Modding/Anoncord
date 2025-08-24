@@ -2,6 +2,7 @@
 #include "private.h"
 #include <iostream>
 #include "private_vents.h"
+#include "slash_commands.h"
 #include "utilities.h"
 
 using namespace std;
@@ -11,77 +12,19 @@ int main()
 {
    dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 
-   private_vents privateVents(&bot);
+   private_vents vents(&bot);
+   slash_commands slash_commands(&bot, &vents);
 
    bot.on_log(dpp::utility::cout_logger());
 
-   bot.on_slashcommand([&bot, &privateVents](const dpp::slashcommand_t &event)
-                       {
 
 
-      string command = event.command.get_command_name();
-         if (command == "anon" || command == "guild_anon") {
-            string msg = get<string>(event.get_parameter("message"));
+   bot.on_slashcommand([&slash_commands](const dpp::slashcommand_t &event)
+                     {
+                        slash_commands.on_slash_command(event);
+                     });
 
-            dpp::embed embed = dpp::embed()
-               .set_color(dpp::colors::red_blood)
-               .set_title("Anonymous vent")
-               .set_description(std::get<std::string>(event.get_parameter("message")));
-
-            dpp::message vent = dpp::message(event.command.channel_id, embed);
-
-            bot.message_create(vent, [&bot, event, msg](const dpp::confirmation_callback_t &callback) {
-               if (callback.is_error()) {
-                  cerr << "Failed to send anonymous vent message: " << callback.get_error().message << endl;
-                  return;
-               }
-
-               const dpp::message& sent_msg = get<dpp::message>(callback.value);
-               dpp::snowflake vent_id = sent_msg.id; // message ID is always a snowflake
-
-               // Ephemeral confirmation
-               dpp::message reply_msg("Only you can see this.");
-               reply_msg.set_flags(dpp::m_ephemeral);
-               event.reply(reply_msg);
-
-               // Direct message with delete button
-               dpp::embed direct_embed = dpp::embed()
-                  .set_color(dpp::colors::red_blood)
-                  .set_title("Anoncord Message Deletion Services")
-                  .set_description("If you'd like to delete your vent, use the button below:\n" + msg);
-
-               dpp::component delete_button;
-               delete_button.set_type(dpp::cot_button)
-                           .set_label("Delete Message")
-                           .set_style(dpp::cos_danger)
-                           .set_id("delete_" + std::to_string(vent_id) + "_" + std::to_string(event.command.channel_id));
-
-               dpp::message direct_msg;
-               direct_msg.add_embed(direct_embed)
-                        .add_component(dpp::component().add_component(delete_button));
-
-               bot.direct_message_create(event.command.member.user_id, direct_msg);
-            });
-   } else if (command == "private_dm") {
-      dpp::snowflake user_id = get<dpp::snowflake>(event.get_parameter("user"));
-
-      cout << user_id << "\n";
-
-      string message = get<string>(event.get_parameter("message"));
-
-      cout << message << "\n";
-
-      dpp::snowflake anon_user_id = event.command.member.user_id;
-      
-      privateVents.send_dm(user_id, anon_user_id, message);
-
-      dpp::message reply("DM Sent");
-      reply.set_flags(dpp::m_ephemeral);
-
-      event.reply(reply);
-   } });
-
-   bot.on_button_click([&bot, &privateVents](const dpp::button_click_t &event)
+   bot.on_button_click([&bot, &vents](const dpp::button_click_t &event)
                        {
       string command = event.custom_id;
 
@@ -116,7 +59,7 @@ int main()
          event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
 
          // Send the message to the anon user that the dm was accepted
-         privateVents.dm_accepted(user_id, anon_user_id);
+         vents.dm_accepted(user_id, anon_user_id);
       } else if (command.find("reject-dm_") != string::npos) {
          // Find all the parts
          vector<string> parts = split_string(command, '_');
@@ -130,7 +73,7 @@ int main()
          event.reply(dpp::message("DM Rejected").set_flags(dpp::m_ephemeral));
 
          // Send the message to the anon user that the dm was accepted
-         privateVents.dm_rejected(user_id, anon_user_id);
+         vents.dm_rejected(user_id, anon_user_id);
       } });
 
    bot.on_ready([&bot](const dpp::ready_t &event)

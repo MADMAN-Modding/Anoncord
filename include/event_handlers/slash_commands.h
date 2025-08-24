@@ -3,9 +3,9 @@
 class slash_commands
 {
 public:
-    /// @brief Constructor for the slash command
+    /// @brief Constructor for slash_commands
     /// @param bot Pointer to bot object
-    /// @param private_vents Reference to private_vents object
+    /// @param private_vents Point to private_vents object
     slash_commands(dpp::cluster *bot, ::private_vents *private_vents_obj);
 
     /// @brief Determines which function to call when a slashcommand is received

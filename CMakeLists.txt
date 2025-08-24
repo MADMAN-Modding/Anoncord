@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
     src/private_vents.cpp
     src/utilities.cpp
     src/event_handlers/slash_commands.cpp
+    src/event_handlers/button_commands.cpp
 )    
 
 # Find our pre-installed DPP package (using FindDPP.cmake).

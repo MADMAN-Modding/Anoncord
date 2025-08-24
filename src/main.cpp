@@ -3,6 +3,7 @@
 #include <iostream>
 #include "private_vents.h"
 #include "slash_commands.h"
+#include "button_commands.h"
 #include "utilities.h"
 
 using namespace std;
@@ -12,69 +13,19 @@ int main()
 {
    dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 
-   private_vents vents(&bot);
-   slash_commands slash_commands(&bot, &vents);
+   private_vents private_vents(&bot);
+   slash_commands slash_commands(&bot, &private_vents);
+   button_commands button_commands(&bot, &private_vents);
 
    bot.on_log(dpp::utility::cout_logger());
 
-
-
+   // Slash commands
    bot.on_slashcommand([&slash_commands](const dpp::slashcommand_t &event)
-                     {
-                        slash_commands.on_slash_command(event);
-                     });
+                       { slash_commands.on_slash_command(event); });
 
-   bot.on_button_click([&bot, &vents](const dpp::button_click_t &event)
-                       {
-      string command = event.custom_id;
-
-      if (command.find("delete") != string::npos) {
-         // Find all the parts
-         vector<string> parts = split_string(command, '_');
-
-         // Find the message_id from using the splits
-         string msg_id = parts[1];
-
-         // Find the channel_id from using the splits
-         string channel_id = parts[2];
-
-         // Commenting these for debug purposes
-         // cout << "Msg ID: " << msg_id << "\n";
-         // cout << "Channel ID: " << channel_id << "\n";
-
-         // Find the message with the given ID and delete it
-         bot.message_delete(msg_id, channel_id);
-
-         event.reply("Your anonymous message has been deleted.");
-      } else if (command.find("accept-dm_") != string::npos) {
-         // Find all the parts
-         vector<string> parts = split_string(command, '_');
-
-         // Find the user_id from using the splits
-         dpp::snowflake user_id = stoull(parts[1]);
-
-         // Find the anon_user_id from using the splits
-         dpp::snowflake anon_user_id = stoull(parts[2]);
-
-         event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
-
-         // Send the message to the anon user that the dm was accepted
-         vents.dm_accepted(user_id, anon_user_id);
-      } else if (command.find("reject-dm_") != string::npos) {
-         // Find all the parts
-         vector<string> parts = split_string(command, '_');
-
-         // Find the user_id from using the splits
-         dpp::snowflake user_id = stoull(parts[1]);
-
-         // Find the anon_user_id from using the splits
-         dpp::snowflake anon_user_id = stoull(parts[2]);
-
-         event.reply(dpp::message("DM Rejected").set_flags(dpp::m_ephemeral));
-
-         // Send the message to the anon user that the dm was accepted
-         vents.dm_rejected(user_id, anon_user_id);
-      } });
+   // Button commands
+   bot.on_button_click([&button_commands](const dpp::button_click_t &event)
+                       { button_commands.on_button_command(event); });
 
    bot.on_ready([&bot](const dpp::ready_t &event)
                 {

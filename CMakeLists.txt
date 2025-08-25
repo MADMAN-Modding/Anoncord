@@ -12,7 +12,7 @@ add_executable(${PROJECT_NAME}
     src/private_vent_session.cpp
     src/utilities.cpp
     src/event_handlers/button_commands.cpp
-    src/event_handlers/messages.cpp
+    src/event_handlers/message_events.cpp
     src/event_handlers/slash_commands.cpp
 )    
 

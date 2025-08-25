@@ -1,13 +1,13 @@
-#include "messages.h"
+#include "message_events.h"
 #include "utilities.h"
 
-::messages::messages(dpp::cluster *bot, std::vector<private_vent_session> *private_vent_sessions)
+message_events::message_events(dpp::cluster *bot, std::vector<private_vent_session> *private_vent_sessions)
 {
     this->bot = bot;
     this->private_vent_sessions = private_vent_sessions;
 }
 
-void ::messages::on_message_create(dpp::message_create_t event)
+void message_events::on_message_create(dpp::message_create_t event)
 {
     if (!event.msg.is_dm() || dpp::snowflake(1268383421638377612) == event.msg.author.id)
     {

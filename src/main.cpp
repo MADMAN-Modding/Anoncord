@@ -5,7 +5,7 @@
 #include "private.h"
 #include "private_vents.h"
 #include "button_commands.h"
-#include "messages.h"
+#include "message_events.h"
 #include "slash_commands.h"
 #include "private_vent_session.h"
 

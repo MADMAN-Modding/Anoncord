@@ -1,3 +1,4 @@
+#pragma once
 #include "private_vents.h"
 
 class slash_commands
@@ -17,10 +18,14 @@ private:
     ::private_vents *private_vents;
 
     /// @brief Sends an anonymous vent
-    /// @param event Event trigger with command info
+    /// @param event Event trigger with the command info
     void anon_vent(dpp::slashcommand_t event);
 
     /// @brief Sends a request to a user for a private dm 
-    /// @param event Event trigger with command info
+    /// @param event Event trigger with the command info
     void private_dm(dpp::slashcommand_t event);
-}; 
+
+    /// @brief End a private DM with a user
+    /// @param event Event trigger with the command info
+    void end_dm(dpp::slashcommand_t event);
+};

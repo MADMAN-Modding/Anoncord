@@ -1,16 +1,16 @@
 #pragma once
 #include <dpp/dpp.h>
+#include <vector>
+#include "private_vent_session.h"
 
 using namespace std;
 
 class private_vents
 {
 public:
-    dpp::cluster *bot;
-
     /// @brief Constructor for private_vents class
     /// @param bot Pointer to bot object
-    private_vents(dpp::cluster *bot);
+    private_vents(dpp::cluster *bot, vector<private_vent_session> *private_vent_sessions);
 
     /// @brief Sends a DM to the specified user asking if they can DM with an anonymous user
     /// @param user_id ID of the user to be DMed
@@ -28,7 +28,17 @@ public:
     /// @param anon_user_id ID of the anonymous user
     void dm_rejected(dpp::snowflake user_id, dpp::snowflake anon_user_id);
 
+    /// @brief Get the vector with all the private_vent_session objects
+    /// @return Pointer to the vector with all the private_vent_session object
+    vector<::private_vent_session>* get_private_vent_sessions();
+
 private:
+    /// @brief Pointer to bot object
+    dpp::cluster *bot;
+
+    /// @brief Pointed to private_vent_session vector
+    vector<::private_vent_session> *private_vent_sessions;
+
     /// @brief Sends a DM to the anonymous to inform that their DM request was accepted or rejected
     /// @param accepted True if excepted, false if rejected
     /// @param user_id ID of the requested user

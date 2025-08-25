@@ -1,3 +1,4 @@
+#pragma once
 #include "private_vents.h"
 
 class button_commands {

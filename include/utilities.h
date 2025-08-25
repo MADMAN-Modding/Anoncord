@@ -1,14 +1,22 @@
+#pragma once
 #include <dpp/dpp.h>
 #include <iostream>
 
 using namespace std;
 
-/// @brief Makes an embed to be sent to the user
-/// @param title Embed's title
-/// @param description Embed's description
-/// @param color Embed's color (use dpp::colors)
-/// @return Embed made from supplied values
+/// @brief makes an embed to be sent to the user
+/// @param title embed's title
+/// @param description embed's description
+/// @param color embed's color (use dpp::colors)
+/// @return embed made from supplied values
 dpp::embed make_embed(string title, string description, uint32_t color);
+
+/// @brief makes an embed to be sent to the user
+/// @param title embed's title
+/// @param description embed's description
+/// @param color embed's color (use dpp::colors)
+/// @return embed made from supplied values
+dpp::embed make_embed(string title, dpp::message description, uint32_t color);
 
 /// @brief Makes a button to be attached to an embed
 /// @param label Button's label

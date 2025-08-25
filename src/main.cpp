@@ -1,10 +1,13 @@
 #include <dpp/dpp.h>
-#include "private.h"
 #include <iostream>
+#include <vector>
+
+#include "private.h"
 #include "private_vents.h"
-#include "slash_commands.h"
 #include "button_commands.h"
-#include "utilities.h"
+#include "messages.h"
+#include "slash_commands.h"
+#include "private_vent_session.h"
 
 using namespace std;
 
@@ -13,19 +16,25 @@ int main()
 {
    dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 
-   private_vents private_vents(&bot);
-   slash_commands slash_commands(&bot, &private_vents);
+   vector<private_vent_session> private_vent_sessions;
+   private_vents private_vents(&bot, &private_vent_sessions);
    button_commands button_commands(&bot, &private_vents);
+   message_events message_events(&bot, &private_vent_sessions);
+   slash_commands slash_commands(&bot, &private_vents);
 
    bot.on_log(dpp::utility::cout_logger());
+
+   // Button commands
+   bot.on_button_click([&button_commands](const dpp::button_click_t &event)
+                       { button_commands.on_button_command(event); });
 
    // Slash commands
    bot.on_slashcommand([&slash_commands](const dpp::slashcommand_t &event)
                        { slash_commands.on_slash_command(event); });
 
-   // Button commands
-   bot.on_button_click([&button_commands](const dpp::button_click_t &event)
-                       { button_commands.on_button_command(event); });
+   // Message creation
+   bot.on_message_create([&message_events](const dpp::message_create_t &event)
+                         { message_events.on_message_create(event); });
 
    bot.on_ready([&bot](const dpp::ready_t &event)
                 {
@@ -37,20 +46,14 @@ int main()
                   dpp::command_option(dpp::co_string, "message", "The vent to anonymously send", true)
             );
 
-
-            dpp::slashcommand guild_anon_command("guild_anon", "Enter a vent to be anonymously snet", bot.me.id);
-            guild_anon_command.add_option(
-               dpp::command_option(dpp::co_string, "message", "The vent to be anonymously sent", true)
-            );
-
-
             dpp::slashcommand dm_command("private_dm", "Anonymously DM a user", bot.me.id);
             dm_command.add_option(dpp::command_option(dpp::co_user, "user", "The user to request to dm"));
             dm_command.add_option(dpp::command_option(dpp::co_string, "message", "The message request to be made"));
 
+            dpp::slashcommand end_private_dm_command("end_dm", "End the current private dm", bot.me.id);
+
             // Creates the commands 
-            bot.global_bulk_command_create({global_anon_command, dm_command});
-            bot.guild_bulk_command_create({guild_anon_command}, 1338708878702940244);
+            bot.global_bulk_command_create({global_anon_command, dm_command, end_private_dm_command});
          } });
    bot.start(dpp::st_wait);
 

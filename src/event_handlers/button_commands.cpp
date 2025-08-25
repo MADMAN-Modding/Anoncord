@@ -1,7 +1,10 @@
 #include "button_commands.h"
 #include "utilities.h"
 
-button_commands::button_commands(dpp::cluster *bot, ::private_vents *private_vents) : bot(bot), private_vents(private_vents) {}
+button_commands::button_commands(dpp::cluster *bot, ::private_vents *private_vents) {
+    this->bot = bot;
+    this->private_vents = private_vents;
+}
 
 void button_commands::on_button_command(const dpp::button_click_t &event)
 {
@@ -13,13 +16,15 @@ void button_commands::on_button_command(const dpp::button_click_t &event)
     {
         delete_vent(event);
     }
-    else if (command.find("accept-dm_"))
+    else if (command.find("accept-dm_") != string::npos)
     {
         accept_dm(event);
     }
-    else if (command.find("reject-dm_"))
+    else if (command.find("reject-dm_") != string::npos)
     {
         reject_dm(event);
+    } else {
+        event.reply(dpp::message(command + " not found").set_flags(dpp::m_ephemeral));
     }
 }
 
@@ -57,6 +62,10 @@ void button_commands::accept_dm(const dpp::button_click_t &event)
     // Find the anon_user_id from using the splits
     dpp::snowflake anon_user_id = stoull(parts[2]);
 
+    // Make a private session object and then push it to the vector
+    private_vent_session private_vent_session(user_id, anon_user_id, 0);
+    this->private_vents->get_private_vent_sessions()->push_back(private_vent_session);
+
     event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
 
     // Send the message to the anon user that the dm was accepted
@@ -65,7 +74,7 @@ void button_commands::accept_dm(const dpp::button_click_t &event)
 
 void button_commands::reject_dm(const dpp::button_click_t &event)
 {
-    //Button id
+    // Button id
     string command = event.custom_id;
     
     // Find all the parts

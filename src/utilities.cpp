@@ -7,7 +7,13 @@ dpp::embed make_embed(string title, string description,
   embed.set_color(color).set_title(title).set_description(description);
 
   return embed;
-};
+}
+
+dpp::embed make_embed(string title, dpp::message msg, uint32_t color)
+{
+  string description = msg.to_json()["content"];
+  return make_embed(title, description, color);
+}
 
 dpp::component make_button(string label, dpp::component_style style,
                            string id)

@@ -13,6 +13,7 @@ public:
     void on_button_command(const dpp::button_click_t &event);
 
 private:
+    /// @brief Pointer to bot object
     dpp::cluster *bot;
     ::private_vents *private_vents;
 

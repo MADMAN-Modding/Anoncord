@@ -14,6 +14,7 @@ public:
     void on_slash_command(dpp::slashcommand_t event);
 
 private:
+    /// @brief Pointer to bot object
     dpp::cluster *bot;
     ::private_vents *private_vents;
 

@@ -1,5 +1,6 @@
 #include "message_events.h"
 #include "utilities.h"
+#include "private.h"
 
 message_events::message_events(dpp::cluster *bot, std::vector<private_vent_session> *private_vent_sessions)
 {
@@ -9,7 +10,7 @@ message_events::message_events(dpp::cluster *bot, std::vector<private_vent_sessi
 
 void message_events::on_message_create(dpp::message_create_t event)
 {
-    if (!event.msg.is_dm() || dpp::snowflake(1268383421638377612) == event.msg.author.id)
+    if (!event.msg.is_dm() || bot_id == event.msg.author.id)
     {
         return;
     }

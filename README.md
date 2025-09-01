@@ -6,5 +6,8 @@
 <p>Add the following to the file</p>
 
     #include <iostream>
+    #include <dpp/dpp.h>
 
-    const static std::string token = "your_token";
+    static const std::string token = "your_token";
+
+    static const dpp::snowflake bot_id = 0123456789; 

@@ -17,34 +17,38 @@ void message_events::on_message_create(dpp::message_create_t event)
 
     dpp::snowflake user_id = event.msg.author.id;
 
-    if (this->user_states->find(user_id) != this->user_states->end()) {
+    if (this->user_states->find(user_id) != this->user_states->end())
+    {
         ::user_state user_state = this->user_states->at(user_id);
         ::user_state::user_mode mode = user_state.get_user_mode();
 
         switch (mode)
         {
-        case ::user_state::HELPING | ::user_state::VENTING:
+        case ::user_state::HELPING:
             private_vent(event, user_state);
-            break;
-        
+            return;
+
+        case ::user_state::VENTING:
+            private_vent(event, user_state);
+            return;
+
         case ::user_state::EDITING:
             edit_msg(event, user_state);
-            break;
-        
+            return;
+
         default:
-            event.reply(dpp::message("No current message actions (message edits/private DMs)"));
             break;
         }
-
     }
-
+    event.reply(dpp::message("No current message actions (message edits/private DMs)"));
 }
 
 void message_events::private_vent(dpp::message_create_t event, ::user_state user_state)
 {
     dpp::message msg = event.msg;
 
-    if (user_state.get_user_mode() == ::user_state::HELPING) {
+    if (user_state.get_user_mode() == ::user_state::HELPING)
+    {
         // Get username of helper
         string user = event.msg.author.username;
 
@@ -52,7 +56,9 @@ void message_events::private_vent(dpp::message_create_t event, ::user_state user
 
         // Send message to anon
         this->bot->direct_message_create(user_state.get_partner_user_id(), embed);
-    } else {
+    }
+    else
+    {
         dpp::embed embed = make_embed("Message recieved from Anon", msg, dpp::colors::blood_red);
 
         // Send message to helper

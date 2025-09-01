@@ -38,6 +38,9 @@ public:
     /// @return the mode the user is in
     user_mode get_user_mode();
 
+
+    void set_user_mode(user_mode mode);
+
 private:
     /// @brief ID of the user
     dpp::snowflake user_id;

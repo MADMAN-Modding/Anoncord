@@ -63,9 +63,11 @@ void button_commands::accept_dm(const dpp::button_click_t &event)
     dpp::snowflake anon_user_id = stoull(parts[2]);
 
     // Make a user_state object and then set or add it to the hashmap
-    ::user_state user_state(user_id, anon_user_id, ::user_state::user_mode::HELPING);
+    ::user_state user_state(user_id, anon_user_id, ::user_state::HELPING);
+    ::user_state anon_user_state(anon_user_id, user_id, ::user_state::VENTING);
 
     this->private_vents->get_user_states()->insert_or_assign(user_id, user_state);
+    this->private_vents->get_user_states()->insert_or_assign(anon_user_id, anon_user_state);
 
     event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
 

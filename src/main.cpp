@@ -52,8 +52,8 @@ int main()
             );
 
             dpp::slashcommand dm_command("private_dm", "Anonymously DM a user", bot.me.id);
-            dm_command.add_option(dpp::command_option(dpp::co_user, "user", "The user to request to dm"));
-            dm_command.add_option(dpp::command_option(dpp::co_string, "message", "The message request to be made"));
+            dm_command.add_option(dpp::command_option(dpp::co_user, "user", "The user to request to dm", true));
+            dm_command.add_option(dpp::command_option(dpp::co_string, "message", "The message request to be made", true));
 
             dpp::slashcommand end_private_dm_command("end_dm", "End the current private dm", bot.me.id);
 

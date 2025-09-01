@@ -20,3 +20,8 @@ user_state::user_mode user_state::get_user_mode()
 {
     return this->mode;
 }
+
+void user_state::set_user_mode(user_mode mode)
+{
+    this->mode = mode;
+}

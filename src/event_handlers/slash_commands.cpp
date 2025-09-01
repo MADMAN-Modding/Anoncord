@@ -84,21 +84,16 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
     
     string user = "<@" + to_string(user_id) + ">";
 
-    
+    auto *user_states = this->private_vents->get_user_states();
 
-    for (int i = 0; i < this->private_vents->get_user_states()->size(); i++) {
-        private_vent_session session = this->private_vents->get_user_states()->at(i);
-
-        if (anon_user_id == session.get_anon_user_id() || anon_user_id == session.get_user_id()) {
-            dpp::message reply("You already have private DM active, please use /end_dm in your dm with that user");
-            reply.set_flags(dpp::m_ephemeral);
-            event.reply(reply);
-            return;
-        } else if (user_id == session.get_user_id() || user_id == session.get_anon_user_id()) {
-            dpp::message reply(user + " already has an active DM");
-            reply.set_flags(dpp::m_ephemeral);
+    if (user_states->find(user_id) != user_states->end()) {
+        if (user_states->at(user_id).get_user_mode() != user_state::NONE) {
+            event.reply(dpp::message(user + " is currently occupied.").set_flags(dpp::m_ephemeral));
             return;
         }
+    } else if (user_states->find(anon_user_id) != user_states->end()) {
+        event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
+        return;
     }
 
     this->private_vents->send_dm(user_id, anon_user_id, message);
@@ -113,18 +108,20 @@ void slash_commands::end_dm(dpp::slashcommand_t event)
 {
     dpp::snowflake user_id = event.command.member.user_id;
 
-    vector<private_vent_session> *sessions = this->private_vents->get_user_states();
+    unordered_map<dpp::snowflake, ::user_state> *user_states = this->private_vents->get_user_states();
 
-    for (int i = 0; i < sessions->size(); i++) {
-        private_vent_session session = sessions->at(i);
+    if (user_states->find(user_id) != user_states->end()) {
+        ::user_state state = user_states->at(user_id);
+        
+        state.set_user_mode(::user_state::NONE);
 
-        // If a session is found remove it
-        if (user_id == session.get_user_id() || user_id == session.get_anon_user_id()) {
-            sessions->erase(sessions->begin() + i);
-            event.reply(dpp::message("DM found, it has been ended").set_flags(dpp::m_ephemeral));
-            return;
-        }
-    }    
+        dpp::snowflake partner_id = state.get_partner_user_id();
+
+        (*user_states)[user_id] = state;
+
+        event.reply(dpp::message("DM found, it has been ended").set_flags(dpp::m_ephemeral));
+        return;
+    }  
 
     event.reply(dpp::message("No private DM session was found.").set_flags(dpp::m_ephemeral));
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include <dpp/dpp.h>
 #include <vector>
-#include "private_vent_session.h"
+#include <unordered_map>
+
+#include "user_state.h"
 
 using namespace std;
 
@@ -10,7 +12,8 @@ class private_vents
 public:
     /// @brief Constructor for private_vents class
     /// @param bot Pointer to bot object
-    private_vents(dpp::cluster *bot, vector<private_vent_session> *private_vent_sessions);
+    /// @brief Pointer to user_state hashmap
+    private_vents(dpp::cluster *bot, unordered_map<dpp::snowflake, user_state> *user_states);
 
     /// @brief Sends a DM to the specified user asking if they can DM with an anonymous user
     /// @param user_id ID of the user to be DMed
@@ -28,16 +31,16 @@ public:
     /// @param anon_user_id ID of the anonymous user
     void dm_rejected(dpp::snowflake user_id, dpp::snowflake anon_user_id);
 
-    /// @brief Get the vector with all the private_vent_session objects
-    /// @return Pointer to the vector with all the private_vent_session object
-    vector<::private_vent_session>* get_private_vent_sessions();
+    /// @brief Get the hashamp with all the user_state objects
+    /// @return Pointer to hashmap with all the user_state objects
+    unordered_map<dpp::snowflake, user_state> *get_user_states();
 
 private:
     /// @brief Pointer to bot object
     dpp::cluster *bot;
 
-    /// @brief Pointed to private_vent_session vector
-    vector<::private_vent_session> *private_vent_sessions;
+    /// @brief Pointer to user_state hashmap
+    unordered_map<dpp::snowflake, user_state> *user_states;
 
     /// @brief Sends a DM to the anonymous to inform that their DM request was accepted or rejected
     /// @param accepted True if excepted, false if rejected

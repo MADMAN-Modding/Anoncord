@@ -1,9 +1,10 @@
 #include "private_vents.h"
 #include "utilities.h"
 
-private_vents::private_vents(dpp::cluster *bot, vector<::private_vent_session> *private_vent_sessions) {
+private_vents::private_vents(dpp::cluster *bot, unordered_map<dpp::snowflake, user_state> *user_states)
+{
   this->bot = bot;
-  this->private_vent_sessions = private_vent_sessions;
+  this->user_states = user_states;
 }
 
 void private_vents::send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id, string description)
@@ -38,9 +39,9 @@ void private_vents::dm_rejected(dpp::snowflake user_id, dpp::snowflake anon_user
   response_dm(false, user_id, anon_user_id, dpp::colors::red);
 }
 
-vector<private_vent_session> *private_vents::get_private_vent_sessions()
+unordered_map<dpp::snowflake, user_state> *private_vents::get_user_states()
 {
-    return this->private_vent_sessions;
+  return this->user_states;
 }
 
 void private_vents::response_dm(bool accepted, dpp::snowflake user_id, dpp::snowflake anon_user_id, uint32_t color)
@@ -49,7 +50,7 @@ void private_vents::response_dm(bool accepted, dpp::snowflake user_id, dpp::snow
 
   // Makes the separate parts of the message
   const string user = "<@" + to_string(user_id) + "> ";
-  
+
   // Makes the embed
   dpp::embed embed;
   embed = make_embed("Requested " + status_text + "!", user + str_to_lower(status_text) + " your request!",

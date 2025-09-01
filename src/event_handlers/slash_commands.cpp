@@ -1,5 +1,4 @@
 #include "slash_commands.h"
-#include "private_vent_session.h"
 #include "utilities.h"
 
 slash_commands::slash_commands(dpp::cluster *bot, ::private_vents *private_vents) {
@@ -85,8 +84,10 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
     
     string user = "<@" + to_string(user_id) + ">";
 
-    for (int i = 0; i < this->private_vents->get_private_vent_sessions()->size(); i++) {
-        private_vent_session session = this->private_vents->get_private_vent_sessions()->at(i);
+    
+
+    for (int i = 0; i < this->private_vents->get_user_states()->size(); i++) {
+        private_vent_session session = this->private_vents->get_user_states()->at(i);
 
         if (anon_user_id == session.get_anon_user_id() || anon_user_id == session.get_user_id()) {
             dpp::message reply("You already have private DM active, please use /end_dm in your dm with that user");
@@ -112,7 +113,7 @@ void slash_commands::end_dm(dpp::slashcommand_t event)
 {
     dpp::snowflake user_id = event.command.member.user_id;
 
-    vector<private_vent_session> *sessions = this->private_vents->get_private_vent_sessions();
+    vector<private_vent_session> *sessions = this->private_vents->get_user_states();
 
     for (int i = 0; i < sessions->size(); i++) {
         private_vent_session session = sessions->at(i);

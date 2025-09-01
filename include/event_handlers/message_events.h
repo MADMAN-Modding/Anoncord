@@ -1,16 +1,15 @@
 #pragma once
 #include <dpp/dpp.h>
-#include <vector>
+#include <unordered_map>
 
-#include "private_vent_session.h"
-
+#include "user_state.h"
 class message_events
 {
 public:
     /// @brief Constructor for messages class
     /// @param bot Pointer to bot object
-    /// @param private_vent_sessions Pointer to vector of private_vent_session objects
-    message_events(dpp::cluster *bot, std::vector<private_vent_session> *private_vent_sessions);
+    /// @param user_states Pointer to hashmap of user_state objects
+    message_events(dpp::cluster *bot, std::unordered_map<dpp::snowflake, ::user_state> *user_states);
 
     /// @brief Handles what happens when a DM is sent to Anoncord 
     /// @param event Event trigger for a message being created
@@ -20,6 +19,16 @@ private:
     /// @brief Pointer to bot object
     dpp::cluster *bot;
     
-    /// @brief Pointer to vector of private_vent_sessions objects
-    std::vector<private_vent_session> *private_vent_sessions;
+    /// @brief user_states Pointer to hashmap of user_state objects
+    std::unordered_map<dpp::snowflake, user_state> *user_states;
+
+    /// @brief Send the message to a private vent session
+    /// @param event Event trigger with message info
+    /// @param user_state User that is being acted on
+    void private_vent(dpp::message_create_t event, ::user_state user_state);
+
+    /// @brief Send message to be edited
+    /// @param event Event trigger with message info
+    /// @param user_state User that is being acted on
+    void edit_msg(dpp::message_create_t event, ::user_state user_state);
 };

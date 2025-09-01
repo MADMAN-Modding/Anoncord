@@ -1,13 +1,15 @@
 #include <dpp/dpp.h>
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 #include "private.h"
-#include "private_vents.h"
+#include "user_state.h"
+
+// Event Classes
 #include "button_commands.h"
 #include "message_events.h"
 #include "slash_commands.h"
-#include "private_vent_session.h"
 
 using namespace std;
 
@@ -16,10 +18,13 @@ int main()
 {
    dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 
-   vector<private_vent_session> private_vent_sessions;
-   private_vents private_vents(&bot, &private_vent_sessions);
+   // Hashmap of user_states
+   unordered_map<dpp::snowflake, user_state> user_states;
+
+   // Event Objects
+   private_vents private_vents(&bot, &user_states);
    button_commands button_commands(&bot, &private_vents);
-   message_events message_events(&bot, &private_vent_sessions);
+   message_events message_events(&bot, &user_states);
    slash_commands slash_commands(&bot, &private_vents);
 
    bot.on_log(dpp::utility::cout_logger());

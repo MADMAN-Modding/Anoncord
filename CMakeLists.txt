@@ -9,7 +9,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/private_vents.cpp
-    src/private_vent_session.cpp
     src/user_state.cpp
     src/utilities.cpp
     src/event_handlers/button_commands.cpp

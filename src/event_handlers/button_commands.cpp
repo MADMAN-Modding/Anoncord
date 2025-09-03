@@ -1,7 +1,8 @@
 #include "button_commands.h"
 #include "utilities.h"
 
-button_commands::button_commands(dpp::cluster *bot, ::private_vents *private_vents) {
+button_commands::button_commands(dpp::cluster *bot, ::private_vents *private_vents)
+{
     this->bot = bot;
     this->private_vents = private_vents;
 }
@@ -16,6 +17,10 @@ void button_commands::on_button_command(const dpp::button_click_t &event)
     {
         delete_vent(event);
     }
+    else if (command.find("edit_") != string::npos)
+    {
+        edit_vent(event);
+    }
     else if (command.find("accept-dm_") != string::npos)
     {
         accept_dm(event);
@@ -23,7 +28,9 @@ void button_commands::on_button_command(const dpp::button_click_t &event)
     else if (command.find("reject-dm_") != string::npos)
     {
         reject_dm(event);
-    } else {
+    }
+    else
+    {
         event.reply(dpp::message(command + " not found").set_flags(dpp::m_ephemeral));
     }
 }
@@ -46,6 +53,48 @@ void button_commands::delete_vent(const dpp::button_click_t &event)
     this->bot->message_delete(msg_id, channel_id);
 
     event.reply("Your anonymous message has been deleted.");
+}
+
+void button_commands::edit_vent(const dpp::button_click_t &event)
+{
+    // Button id
+    string command = event.custom_id;
+
+    auto user_id = event.command.member.user_id;
+
+    // Find all the parts of the id
+    vector<string> parts = split_string(command, '_');
+
+    // Find the message id from using the splits
+    string msg_id = parts[1];
+
+    // Find the channel_id from using the splits
+    string channel_id = parts[2];
+
+    bot->message_get(msg_id, channel_id, [event](const dpp::confirmation_callback_t &callback)
+                     {
+	                if (callback.is_error()) {
+	                    event.reply("error editing message");
+	                    return;
+	                }
+	                auto message = callback.get<dpp::message>();
+	 
+                    string message_desription = to_string(message.to_json()["embeds"][0]["description"]);
+
+                    // Trims the leading and tailing parentheses
+                    message_desription = message_desription.substr(1, message_desription.length() - 2);
+
+	                event.reply("Your originally message was: ```" + message_desription + "```"); });
+
+    auto user_states = private_vents->get_user_states();
+
+    if (user_states->find(user_id) != user_states->end()) {
+        (*user_states)[user_id].set_user_mode(user_state::EDITING);
+    } else {
+        user_state state(user_id, 0, user_state::EDITING);
+
+        (*user_states)[user_id] = state;
+    }
 }
 
 void button_commands::accept_dm(const dpp::button_click_t &event)
@@ -79,7 +128,7 @@ void button_commands::reject_dm(const dpp::button_click_t &event)
 {
     // Button id
     string command = event.custom_id;
-    
+
     // Find all the parts
     vector<string> parts = split_string(command, '_');
 

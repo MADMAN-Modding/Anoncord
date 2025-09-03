@@ -11,7 +11,7 @@ public:
     /// @brief Determines which function to call when a button is clicked
     /// @param event Event trigger with command info
     void on_button_command(const dpp::button_click_t &event);
-
+    
 private:
     /// @brief Pointer to bot object
     dpp::cluster *bot;
@@ -20,6 +20,10 @@ private:
     /// @brief Deletes the anonymous vent specified in the button's id
     /// @param event Event trigger with command info
     void delete_vent(const dpp::button_click_t &event);
+
+    /// @brief Edit the anonymous message specified in the button's id
+    /// @param event Event trigger with command info
+    void edit_vent(const dpp::button_click_t &event);
 
     /// @brief Sends a message to the DM requester that their request was accepted
     /// @param event Event trigger with command info

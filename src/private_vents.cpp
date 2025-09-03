@@ -22,8 +22,7 @@ void private_vents::send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id,
   // Creates the message
   dpp::message message;
   message.add_embed(embed)
-      .add_component(dpp::component().add_component(accept_button))
-      .add_component(dpp::component().add_component(reject_button));
+      .add_component(dpp::component().add_component(accept_button).add_component(reject_button));
 
   // Sends the message to the user
   bot->direct_message_create(user_id, message);

@@ -68,4 +68,11 @@ void message_events::private_vent(dpp::message_create_t event, ::user_state user
 
 void message_events::edit_msg(dpp::message_create_t event, ::user_state user_state)
 {
+    string msg = event.msg.content;
+
+    auto user_id = event.msg.author.id;
+
+    cout << msg << "\n";
+
+    (*user_states)[user_id].set_user_mode(user_state::NONE);
 }

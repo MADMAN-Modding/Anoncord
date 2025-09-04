@@ -72,7 +72,26 @@ void message_events::edit_msg(dpp::message_create_t event, ::user_state user_sta
 
     auto user_id = event.msg.author.id;
 
-    cout << msg << "\n";
+    ::user_state state = this->user_states->at(user_id);
+
+    dpp::cluster *bot = this->bot;
+
+    this->bot->message_get(state.get_message_id(), state.get_channel_id(), [bot, msg, event](const dpp::confirmation_callback_t &callback)
+                    {
+	                if (callback.is_error()) {
+	                    event.reply("error");
+	                    return;
+	                }
+	                auto message = callback.get<dpp::message>();
+	 
+                    auto& embeds = message.embeds;
+
+	                /* change the message content and edit the message itself */
+                    embeds[0].set_description(msg);
+
+
+	                bot->message_edit(message);
+	                event.reply("Message has been updated to: ```" + msg + "```"); });
 
     (*user_states)[user_id].set_user_mode(user_state::NONE);
 }

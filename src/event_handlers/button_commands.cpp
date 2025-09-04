@@ -88,13 +88,9 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
 
     auto user_states = private_vents->get_user_states();
 
-    if (user_states->find(user_id) != user_states->end()) {
-        (*user_states)[user_id].set_user_mode(user_state::EDITING);
-    } else {
-        user_state state(user_id, 0, user_state::EDITING);
+    ::user_state state(user_id, 0, user_state::EDITING, stoull(msg_id), stoull(channel_id));
 
-        (*user_states)[user_id] = state;
-    }
+    (*user_states)[user_id] = state;
 }
 
 void button_commands::accept_dm(const dpp::button_click_t &event)

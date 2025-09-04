@@ -26,6 +26,14 @@ public:
     /// @param mode Mode the user is in
     explicit user_state(dpp::snowflake user_id, dpp::snowflake partner_user_id, user_mode mode);
    
+    /// @brief Constructor for creating a user_state with message and channel IDs
+    /// @param user_id ID of the user
+    /// @param partner_user_id ID of the other user in a vent
+    /// @param mode Mode the user is in
+    /// @param message_id ID of the message being edited
+    /// @param channel_id ID of the channel the message is in
+    explicit user_state(dpp::snowflake user_id, dpp::snowflake partner_user_id, user_mode mode, dpp::snowflake message_id, dpp::snowflake channel_id);
+
     /// @brief Gets the user_id
     /// @return the user_id
     dpp::snowflake get_user_id();
@@ -38,6 +46,9 @@ public:
     /// @return the mode the user is in
     user_mode get_user_mode();
 
+    dpp::snowflake get_message_id();
+
+    dpp::snowflake get_channel_id();
 
     void set_user_mode(user_mode mode);
 
@@ -50,4 +61,8 @@ private:
     
     /// Mode the user is in
     user_mode mode;
+
+    dpp::snowflake message_id = 0;
+
+    dpp::snowflake channel_id = 0;
 };

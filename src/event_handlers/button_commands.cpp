@@ -62,6 +62,12 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
 
     auto user_id = event.command.member.user_id;
 
+    if (this->private_vents->get_user_states()->find(user_id) != this->private_vents->get_user_states()->end() && this->private_vents->get_user_states()->at(user_id).get_user_mode() == user_state::NONE)
+    {
+        event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
+        return;
+    }
+
     // Find all the parts of the id
     vector<string> parts = split_string(command, '_');
 
@@ -106,6 +112,18 @@ void button_commands::accept_dm(const dpp::button_click_t &event)
 
     // Find the anon_user_id from using the splits
     dpp::snowflake anon_user_id = stoull(parts[2]);
+
+    if (this->private_vents->get_user_states()->find(user_id) != this->private_vents->get_user_states()->end() && this->private_vents->get_user_states()->at(user_id).get_user_mode() != user_state::NONE)
+    {
+        event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
+        return;
+    }
+
+    if (this->private_vents->get_user_states()->find(anon_user_id) != this->private_vents->get_user_states()->end() && this->private_vents->get_user_states()->at(anon_user_id).get_user_mode() != user_state::NONE)
+    {
+        event.reply(dpp::message("The anonymous user is currently doing something else.").set_flags(dpp::m_ephemeral));
+        return;
+    }
 
     // Make a user_state object and then set or add it to the hashmap
     ::user_state user_state(user_id, anon_user_id, ::user_state::HELPING);

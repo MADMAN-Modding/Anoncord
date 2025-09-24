@@ -62,7 +62,7 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
 
     auto user_id = event.command.member.user_id;
 
-    if (this->private_vents->get_user_states()->find(user_id) != this->private_vents->get_user_states()->end() && this->private_vents->get_user_states()->at(user_id).get_user_mode() == user_state::NONE)
+    if (this->private_vents->get_user_states()->find(user_id) != this->private_vents->get_user_states()->end() && this->private_vents->get_user_states()->at(user_id).get_user_mode() != user_state::NONE)
     {
         event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
         return;

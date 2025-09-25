@@ -90,11 +90,11 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
     auto *user_states = this->private_vents->get_user_states();
 
     if (user_states->find(user_id) != user_states->end()) {
-        if (user_states->at(user_id).get_user_mode() != user_state::NONE) {
+        if (user_states->at(user_id).get_user_mode() != user_state::NONE && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE) {
             event.reply(dpp::message(user + " is currently occupied.").set_flags(dpp::m_ephemeral));
             return;
         }
-    } else if (user_states->find(anon_user_id) != user_states->end()) {
+    } else if (user_states->find(anon_user_id) != user_states->end() && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE) {
         event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
         return;
     }

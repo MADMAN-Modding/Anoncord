@@ -52,14 +52,14 @@ void message_events::private_vent(dpp::message_create_t event, ::user_state user
         // Get username of helper
         string user = event.msg.author.username;
 
-        dpp::embed embed = make_embed("Message Recieved from " + user, msg, dpp::colors::green);
+        dpp::embed embed = make_embed("Message Received from " + user, msg, dpp::colors::green);
 
         // Send message to anon
         this->bot->direct_message_create(user_state.get_partner_user_id(), embed);
     }
     else
     {
-        dpp::embed embed = make_embed("Message recieved from Anon", msg, dpp::colors::blood_red);
+        dpp::embed embed = make_embed("Message received from Anon", msg, dpp::colors::blood_red);
 
         // Send message to helper
         this->bot->direct_message_create(user_state.get_partner_user_id(), embed);

@@ -32,6 +32,10 @@ void slash_commands::anon_vent(dpp::slashcommand_t event)
     // Get the venter's message
     string msg = get<string>(event.get_parameter("message"));
 
+    // bool jiberish = get<bool>(event.get_parameter("jiberish"));
+
+    // cout << jiberish << "\n";
+
     // Make the embed for the message
     dpp::embed embed = dpp::embed()
                            .set_color(dpp::colors::red_blood)
@@ -55,12 +59,12 @@ void slash_commands::anon_vent(dpp::slashcommand_t event)
                 dpp::snowflake vent_id = sent_msg.id;
 
                 // Ephemeral confirmation
-                dpp::message reply_msg("Only you can see this.");
+                dpp::message reply_msg("Your message has been anonymously sent, check your DMs for message services.");
                 reply_msg.set_flags(dpp::m_ephemeral);
                 event.reply(reply_msg);
 
                 // Direct message with delete button
-                dpp::embed direct_embed = make_embed("Anoncord Message Deletion Services", "If you'd like to delete your vent, use the button below:\n" + msg, dpp::colors::red_blood);
+                dpp::embed direct_embed = make_embed("Anoncord Message Services", "If you'd like to delete or your vent, use the button below:\n" + msg, dpp::colors::red_blood);
 
                 // Make the delete button
                 dpp::component delete_button = make_button("Delete Message", dpp::cos_danger, "delete_" + std::to_string(vent_id) + "_" + std::to_string(event.command.channel_id));

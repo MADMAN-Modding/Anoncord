@@ -46,9 +46,13 @@ int main()
          if (dpp::run_once<struct register_bot_commands>())
          {
             // Makes the commands
-            dpp::slashcommand global_anon_command("anon", "Enter a vent to be anonymously sent", bot.me.id);
-            global_anon_command.add_option(
+            dpp::slashcommand anon_command("anon", "Enter a vent to be anonymously sent", bot.me.id);
+            anon_command.add_option(
                   dpp::command_option(dpp::co_string, "message", "The vent to anonymously send", true)
+            );
+
+            anon_command.add_option(
+               dpp::command_option(dpp::co_boolean, "jiberish", "Random characters as message before send for notifications.", false)
             );
 
             dpp::slashcommand dm_command("private_dm", "Anonymously DM a user", bot.me.id);
@@ -58,7 +62,7 @@ int main()
             dpp::slashcommand end_private_dm_command("end_dm", "End the current private dm", bot.me.id);
 
             // Creates the commands 
-            bot.global_bulk_command_create({global_anon_command, dm_command, end_private_dm_command});
+            bot.global_bulk_command_create({anon_command, dm_command, end_private_dm_command});
          } });
    bot.start(dpp::st_wait);
 

@@ -85,12 +85,12 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
 	                }
 	                auto message = callback.get<dpp::message>();
 	 
-                    string message_desription = to_string(message.to_json()["embeds"][0]["description"]);
+                    string message_description = to_string(message.to_json()["embeds"][0]["description"]);
 
                     // Trims the leading and tailing parentheses
-                    message_desription = message_desription.substr(1, message_desription.length() - 2);
+                    message_description = message_description.substr(1, message_description.length() - 2);
 
-	                event.reply("Your originally message was: ```" + message_desription + "```"); });
+                    event.reply("Your original message was:\n```" + message_description + "```"); });
 
     auto user_states = private_vents->get_user_states();
 

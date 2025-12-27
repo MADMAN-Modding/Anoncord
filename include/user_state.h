@@ -17,7 +17,7 @@ public:
         VENTING
     };
 
-    /// @brief Defualt contstructor for user_state class
+    /// @brief Default constructor for user_state class
     user_state() = default;
 
     /// @brief Constructor for creating a user_state 

@@ -25,7 +25,7 @@ void private_vents::send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id,
       .add_component(dpp::component().add_component(accept_button).add_component(reject_button));
 
   // Sends the message to the user
-  bot->direct_message_create(user_id, message);
+  dm_user(bot, user_id, message);
 }
 
 void private_vents::dm_accepted(dpp::snowflake user_id, dpp::snowflake anon_user_id)
@@ -60,5 +60,5 @@ void private_vents::response_dm(bool accepted, dpp::snowflake user_id, dpp::snow
   message.add_embed(embed);
 
   // Sends the message to the anonymous user
-  bot->direct_message_create(anon_user_id, message);
+  dm_user(bot, anon_user_id, message);
 }

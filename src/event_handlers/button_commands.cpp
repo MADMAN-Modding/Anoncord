@@ -77,7 +77,9 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
     // Find the channel_id from using the splits
     string channel_id = parts[2];
 
-    bot->message_get(msg_id, channel_id, [event](const dpp::confirmation_callback_t &callback)
+    dpp::cluster *bot = this->bot;
+
+    bot->message_get(msg_id, channel_id, [bot, event](const dpp::confirmation_callback_t &callback)
                      {
 	                if (callback.is_error()) {
 	                    event.reply("error editing message");
@@ -90,7 +92,9 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
                     // Trims the leading and tailing parentheses
                     message_description = message_description.substr(1, message_description.length() - 2);
 
-                    event.reply("Your original message was:\n```" + message_description + "```"); });
+                    event.reply("Your original message was:"); 
+
+                    dm_user(bot, event.command.usr.id, dpp::message("```" + message_description + "```")); });
 
     auto user_states = private_vents->get_user_states();
 

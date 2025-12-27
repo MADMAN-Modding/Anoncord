@@ -47,3 +47,13 @@ vector<string> split_string(const string &str, char delimiter)
   parts.push_back(str.substr(start)); // Add last part
   return parts;
 }
+
+void dm_user(dpp::cluster *bot, dpp::snowflake id, dpp::message message)
+{
+  bot->direct_message_create(id, message);
+}
+
+void dm_user(dpp::cluster *bot, dpp::snowflake id, string message)
+{
+  dm_user(bot, id, dpp::message(message));
+}

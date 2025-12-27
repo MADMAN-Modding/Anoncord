@@ -78,7 +78,7 @@ void slash_commands::anon_vent(dpp::slashcommand_t event)
                         .add_component(dpp::component().add_component(delete_button).add_component(edit_button));
 
                 // Sends the dm to the venter
-                this->bot->direct_message_create(event.command.member.user_id, direct_msg); });
+                dm_user(bot, event.command.member.user_id, direct_msg); });
 }
 
 void slash_commands::private_dm(dpp::slashcommand_t event)

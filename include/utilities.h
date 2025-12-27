@@ -35,3 +35,15 @@ string str_to_lower(string s);
 /// @param delimiter character to separate parts by
 /// @return all found parts
 vector<string> split_string(const string &s, char delimiter);
+
+/// @brief Send a DM to a user
+/// @param bot Reference to the bot object
+/// @param id ID of user to message
+/// @param message Message to send
+void dm_user(dpp::cluster *bot, dpp::snowflake id, dpp::message message);
+
+/// @brief Send a DM to a user
+/// @param bot Reference to the bot object
+/// @param id ID of user to message
+/// @param message Message to send
+void dm_user(dpp::cluster *bot, dpp::snowflake id, string message);

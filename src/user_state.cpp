@@ -45,3 +45,13 @@ void user_state::set_user_mode(user_mode mode)
 {
     this->mode = mode;
 }
+
+void user_state::set_notify(bool notify)
+{
+    this->typing_notify = notify;
+}
+
+bool user_state::get_notify()
+{
+    return this->typing_notify;
+}

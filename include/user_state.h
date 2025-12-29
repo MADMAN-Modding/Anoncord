@@ -52,6 +52,10 @@ public:
 
     void set_user_mode(user_mode mode);
 
+    void set_notify(bool notify);
+
+    bool get_notify();
+
 private:
     /// @brief ID of the user
     dpp::snowflake user_id;

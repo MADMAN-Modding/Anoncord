@@ -52,21 +52,23 @@ void private_vents::typing_dm(dpp::typing_start_t event)
   {
     ::user_state state = this->user_states->at(user_id);
 
+    auto partner = state.get_partner_user_id();
+
+    if (!(*user_states)[partner].get_notify()) {
+      return;
+    }
+
     if (state.get_user_mode() == user_state::HELPING)
     {
-      auto anon = state.get_partner_user_id();
-
       auto embed = make_embed("Typing", "Your helper is typing", dpp::colors::blue);
 
-      dm_user(this->bot, anon, embed);
+      dm_user(this->bot, partner, embed);
     }
     else
     {
-      auto helper = state.get_partner_user_id();
-
       auto embed = make_embed("Typing", "Anon is typing", dpp::colors::blue);
 
-      dm_user(this->bot, helper, embed);
+      dm_user(this->bot, partner, embed);
     }
   }
 }

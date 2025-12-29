@@ -22,6 +22,12 @@ void message_events::on_message_create(dpp::message_create_t event)
         ::user_state user_state = this->user_states->at(user_id);
         ::user_state::user_mode mode = user_state.get_user_mode();
 
+        // If the message is NO_TYPING then the typing notifications won't be sent
+        if (event.msg.content == "NO_TYPING") {
+            (*user_states)[user_id].set_notify(false);
+            return;
+        }
+
         switch (mode)
         {
         case ::user_state::HELPING:

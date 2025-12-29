@@ -5,6 +5,7 @@
 
 #include "private.h"
 #include "user_state.h"
+#include "utilities.h"
 
 // Event Classes
 #include "button_commands.h"
@@ -52,7 +53,7 @@ int main()
             );
 
             anon_command.add_option(
-               dpp::command_option(dpp::co_boolean, "jiberish", "Random characters as message before send for notifications.", false)
+               dpp::command_option(dpp::co_boolean, "jiberish", "(doesn't work yet) Random characters as message before send for notifications.", false)
             );
 
             dpp::slashcommand dm_command("private_dm", "Anonymously DM a user", bot.me.id);
@@ -64,6 +65,13 @@ int main()
             // Creates the commands 
             bot.global_bulk_command_create({anon_command, dm_command, end_private_dm_command});
          } });
+
+   bot.on_typing_start([&bot, &private_vents](const dpp::typing_start_t &event)
+                       {
+                        if (event.typing_channel.owner_id == 0) {
+                           private_vents.typing_dm(event);
+                        } });
+
    bot.start(dpp::st_wait);
 
    return 0;

@@ -59,10 +59,15 @@ private:
     /// @brief partner_user_id ID of the other user in a vent
     dpp::snowflake partner_user_id;
     
-    /// Mode the user is in
+    /// @brief Mode the user is in
     user_mode mode;
 
+    /// @brief Message the user is editing
     dpp::snowflake message_id = 0;
 
+    /// @brief Channel the message being editted is in
     dpp::snowflake channel_id = 0;
+
+    /// @brief Does the user want to be notified when the other user is typing (currently stored in RAM, eventually will be in a database)
+    bool typing_notify = true;
 };

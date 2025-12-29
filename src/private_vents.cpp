@@ -43,6 +43,34 @@ unordered_map<dpp::snowflake, user_state> *private_vents::get_user_states()
   return this->user_states;
 }
 
+void private_vents::typing_dm(dpp::typing_start_t event)
+{
+
+  auto user_id = event.typing_user.id;
+
+  if (this->user_states->find(user_id) != this->user_states->end())
+  {
+    ::user_state state = this->user_states->at(user_id);
+
+    if (state.get_user_mode() == user_state::HELPING)
+    {
+      auto anon = state.get_partner_user_id();
+
+      auto embed = make_embed("Typing", "Your helper is typing", dpp::colors::blue);
+
+      dm_user(this->bot, anon, embed);
+    }
+    else
+    {
+      auto helper = state.get_partner_user_id();
+
+      auto embed = make_embed("Typing", "Anon is typing", dpp::colors::blue);
+
+      dm_user(this->bot, helper, embed);
+    }
+  }
+}
+
 void private_vents::response_dm(bool accepted, dpp::snowflake user_id, dpp::snowflake anon_user_id, uint32_t color)
 {
   string status_text = accepted ? "Accepted" : "Rejected";

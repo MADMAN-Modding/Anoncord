@@ -31,9 +31,13 @@ public:
     /// @param anon_user_id ID of the anonymous user
     void dm_rejected(dpp::snowflake user_id, dpp::snowflake anon_user_id);
 
-    /// @brief Get the hashamp with all the user_state objects
+    /// @brief Get the hashmap with all the user_state objects
     /// @return Pointer to hashmap with all the user_state objects
     unordered_map<dpp::snowflake, user_state> *get_user_states();
+
+    /// @brief Update either user if the other is typing
+    /// @param event Event of what happened
+    void typing_dm(dpp::typing_start_t event);
 
 private:
     /// @brief Pointer to bot object

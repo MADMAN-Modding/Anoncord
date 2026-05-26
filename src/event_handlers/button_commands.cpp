@@ -79,22 +79,27 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
 
     dpp::cluster *bot = this->bot;
 
-    bot->message_get(msg_id, channel_id, [bot, event](const dpp::confirmation_callback_t &callback)
+    bot->message_get(msg_id, channel_id, [bot, event, user_id](const dpp::confirmation_callback_t &callback)
                      {
-	                if (callback.is_error()) {
-	                    event.reply("error editing message");
-	                    return;
-	                }
-	                auto message = callback.get<dpp::message>();
-	 
-                    string message_description = to_string(message.to_json()["embeds"][0]["description"]);
+                         if (callback.is_error())
+                         {
+                             event.reply("error editing message");
+                             return;
+                         }
+                         auto message = callback.get<dpp::message>();
 
-                    // Trims the leading and tailing parentheses
-                    message_description = message_description.substr(1, message_description.length() - 2);
+                         string message_description = to_string(message.to_json()["embeds"][0]["description"]);
 
-                    event.reply("Your original message was:"); 
+                         // Trims the leading and tailing parentheses
+                         message_description = message_description.substr(1, message_description.length() - 2);
 
-                    dm_user(bot, event.command.usr.id, dpp::message("```" + message_description + "```")); });
+                         event.reply("Your original message was:", ([bot, user_id, message_description](const dpp::confirmation_callback_t &callback)
+                                                                    { 
+                                                                        dm_user(bot, user_id, dpp::message("```" + message_description + "```"));
+                                                                    }));
+
+                         // dm_user(bot, event.command.usr.id, dpp::message("```" + message_description + "```"));
+                     });
 
     auto user_states = private_vents->get_user_states();
 

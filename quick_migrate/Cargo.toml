@@ -1,0 +1,12 @@
+[package]
+name = "quick_migrate"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "quick_migrate"
+path = "src/main.rs"
+
+[dependencies]
+sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }

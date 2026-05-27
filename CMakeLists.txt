@@ -1,7 +1,7 @@
 # Minimum CMake version required, we'll just use the latest version.
 cmake_minimum_required(VERSION 3.22)
 # Project name, version and description
-project(Anoncord VERSION 1.0 DESCRIPTION "An anonymous discord messaging bot")
+project(Anoncord VERSION 1.2 DESCRIPTION "An anonymous discord messaging bot")
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake) 
 # Add executable
 add_executable(${PROJECT_NAME}
@@ -38,3 +38,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED ON
 )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_custom_target(run_migrations
+    COMMAND cargo run --manifest-path ${CMAKE_SOURCE_DIR}/quick_migrate/Cargo.toml
+    COMMENT "Running DB migrations"
+)
+add_dependencies(${PROJECT_NAME} run_migrations)

@@ -34,7 +34,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 # Set C++ version
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
 )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

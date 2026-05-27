@@ -1,9 +1,12 @@
 #include "slash_commands.h"
 #include "utilities.h"
+#include "settings.h"
 
-slash_commands::slash_commands(dpp::cluster *bot, ::private_vents *private_vents) {
+slash_commands::slash_commands(dpp::cluster *bot, ::private_vents *private_vents, ::settings *settings)
+{
     this->bot = bot;
     this->private_vents = private_vents;
+    this->settings = settings;
 }
 
 void slash_commands::on_slash_command(dpp::slashcommand_t event)
@@ -17,9 +20,20 @@ void slash_commands::on_slash_command(dpp::slashcommand_t event)
     else if (command == "private_dm")
     {
         private_dm(event);
-    } else if (command == "end_dm") {
+    }
+    else if (command == "end_dm")
+    {
         end_dm(event);
-    } else {
+    }
+    else if (command == "receive_typing_notifications")
+    {
+        set_typing_option(event);
+    }
+    else if (command == "allow_private_dm_requests") {
+        allow_private_dms(event);
+    }
+    else
+    {
         dpp::message reply("Command not found");
         reply.set_flags(dpp::m_ephemeral);
 
@@ -31,10 +45,6 @@ void slash_commands::anon_vent(dpp::slashcommand_t event)
 {
     // Get the venter's message
     string msg = get<string>(event.get_parameter("message"));
-
-    // bool jiberish = get<bool>(event.get_parameter("jiberish"));
-
-    // cout << jiberish << "\n";
 
     // Make the embed for the message
     dpp::embed embed = dpp::embed()
@@ -88,17 +98,21 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
     string message = get<string>(event.get_parameter("message"));
 
     dpp::snowflake anon_user_id = event.command.member.user_id;
-    
+
     string user = "<@" + to_string(user_id) + ">";
 
     auto *user_states = this->private_vents->get_user_states();
 
-    if (user_states->find(user_id) != user_states->end()) {
-        if (user_states->at(user_id).get_user_mode() != user_state::NONE && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE) {
+    if (user_states->find(user_id) != user_states->end())
+    {
+        if (user_states->at(user_id).get_user_mode() != user_state::NONE && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE)
+        {
             event.reply(dpp::message(user + " is currently occupied.").set_flags(dpp::m_ephemeral));
             return;
         }
-    } else if (user_states->find(anon_user_id) != user_states->end() && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE) {
+    }
+    else if (user_states->find(anon_user_id) != user_states->end() && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE)
+    {
         event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
         return;
     }
@@ -117,9 +131,10 @@ void slash_commands::end_dm(dpp::slashcommand_t event)
 
     unordered_map<dpp::snowflake, ::user_state> *user_states = this->private_vents->get_user_states();
 
-    if (user_states->find(user_id) != user_states->end()) {
+    if (user_states->find(user_id) != user_states->end())
+    {
         ::user_state state = user_states->at(user_id);
-        
+
         state.set_user_mode(::user_state::NONE);
 
         dpp::snowflake partner_id = state.get_partner_user_id();
@@ -128,7 +143,32 @@ void slash_commands::end_dm(dpp::slashcommand_t event)
 
         event.reply(dpp::message("DM found, it has been ended").set_flags(dpp::m_ephemeral));
         return;
-    }  
+    }
 
     event.reply(dpp::message("No private DM session was found.").set_flags(dpp::m_ephemeral));
+}
+
+void slash_commands::set_typing_option(dpp::slashcommand_t event)
+{
+    dpp::snowflake user_id = event.command.member.user_id;
+    bool option = get<bool>(event.get_parameter("receive_notifications"));
+
+    bool result = this->set_preference(user_id, ::settings::setting::TYPING, option);
+
+    event.reply(result ? "Successfully updated preferences" : "Failed to update preferences");
+}
+
+void slash_commands::allow_private_dms(dpp::slashcommand_t event)
+{
+    dpp::snowflake user_id = event.command.member.user_id;
+    bool option = get<bool>(event.get_parameter("allow_private_dm_requests"));
+
+    bool result = this->set_preference(user_id, ::settings::setting::PRIVATE_DMS, option);
+
+    event.reply(result ? "Successfully updated preferences" : "Failed to update preferences");
+}
+
+bool slash_commands::set_preference(dpp::snowflake user_id, ::settings::setting setting, bool option)
+{
+    return this->settings->set_preference(user_id, setting, option);
 }

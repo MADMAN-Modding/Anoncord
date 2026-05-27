@@ -6,6 +6,7 @@
 #include "private.h"
 #include "user_state.h"
 #include "utilities.h"
+#include "settings.h"
 
 // Event Classes
 #include "button_commands.h"
@@ -22,11 +23,14 @@ int main()
    // Hashmap of user_states
    unordered_map<dpp::snowflake, user_state> user_states;
 
+   // Settings
+   ::settings settings;
+
    // Event Objects
-   private_vents private_vents(&bot, &user_states);
-   button_commands button_commands(&bot, &private_vents);
-   message_events message_events(&bot, &user_states);
-   slash_commands slash_commands(&bot, &private_vents);
+   ::private_vents private_vents(&bot, &user_states);
+   ::button_commands button_commands(&bot, &private_vents);
+   ::message_events message_events(&bot, &user_states);
+   ::slash_commands slash_commands(&bot, &private_vents, &settings);
 
    bot.on_log(dpp::utility::cout_logger());
 
@@ -44,26 +48,28 @@ int main()
 
    bot.on_ready([&bot](const dpp::ready_t &event)
                 {
+         // Makes the commands
          if (dpp::run_once<struct register_bot_commands>())
          {
-            // Makes the commands
-            dpp::slashcommand anon_command("anon", "Enter a vent to be anonymously sent", bot.me.id);
-            anon_command.add_option(
+            dpp::slashcommand anon_vent("anon", "Enter a vent to be anonymously sent", bot.me.id);
+            anon_vent.add_option(
                   dpp::command_option(dpp::co_string, "message", "The vent to anonymously send", true)
             );
 
-            anon_command.add_option(
-               dpp::command_option(dpp::co_boolean, "jiberish", "(doesn't work yet) Random characters as message before send for notifications.", false)
-            );
-
-            dpp::slashcommand dm_command("private_dm", "Anonymously DM a user", bot.me.id);
-            dm_command.add_option(dpp::command_option(dpp::co_user, "user", "The user to request to dm", true));
-            dm_command.add_option(dpp::command_option(dpp::co_string, "message", "The message request to be made", true));
+            dpp::slashcommand private_dm("private_dm", "Anonymously DM a user", bot.me.id);
+            private_dm.add_option(dpp::command_option(dpp::co_user, "user", "The user to request to dm", true));
+            private_dm.add_option(dpp::command_option(dpp::co_string, "message", "The message request to be made", true));
 
             dpp::slashcommand end_private_dm_command("end_dm", "End the current private dm", bot.me.id);
 
+            dpp::slashcommand set_typing_option("receive_typing_notifications", "Receive typing notifications while in a private dm", bot.me.id);
+            set_typing_option.add_option(dpp::command_option(dpp::co_boolean, "receive_notifications", "True to receive notifications, false to not receive notifications", true));
+            
+            dpp::slashcommand allow_private_dms("allow_private_dm_requests", "Do you want to allow private dm requests? This defaults to true, disabling requests will not stop you from requesting help", bot.me.id);
+            allow_private_dms.add_option(dpp::command_option(dpp::co_boolean, "allow_private_dm_requests", "True to allow receiving requests, false to not allow requests", true));
+
             // Creates the commands 
-            bot.global_bulk_command_create({anon_command, dm_command, end_private_dm_command});
+            bot.global_bulk_command_create({anon_vent, private_dm, end_private_dm_command, set_typing_option, allow_private_dms});
          } });
 
    bot.on_typing_start([&bot, &private_vents](const dpp::typing_start_t &event)

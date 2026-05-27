@@ -60,7 +60,7 @@ void private_vents::typing_dm(dpp::typing_start_t event)
 
     if (state.get_user_mode() == user_state::HELPING)
     {
-      auto embed = make_embed("Typing", "Your helper is typing", dpp::colors::blue);
+      auto embed = make_embed("Typing", "Your helper is typing\n-# alter this by using /receive_typing_notifications", dpp::colors::blue);
 
       dm_user(this->bot, partner, embed);
     }

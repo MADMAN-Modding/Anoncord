@@ -2,42 +2,39 @@
 cmake_minimum_required(VERSION 3.22)
 # Project name, version and description
 project(Anoncord VERSION 1.0 DESCRIPTION "An anonymous discord messaging bot")
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake) 
-
 # Add executable
 add_executable(${PROJECT_NAME}
-    src/main.cpp
-    src/private_vents.cpp
-    src/user_state.cpp
-    src/utilities.cpp
-    src/event_handlers/button_commands.cpp
-    src/event_handlers/message_events.cpp
-    src/event_handlers/slash_commands.cpp
+src/main.cpp
+src/private_vents.cpp
+src/user_state.cpp
+src/utilities.cpp
+src/settings.cpp
+src/event_handlers/button_commands.cpp
+src/event_handlers/message_events.cpp
+src/event_handlers/slash_commands.cpp
 )    
-
 # Find our pre-installed DPP package (using FindDPP.cmake).
 find_package(DPP REQUIRED)
-    
-# Link the pre-installed DPP package.
+# Find SQLite3
+find_package(SQLite3 REQUIRED)
+# Link the pre-installed DPP package and SQLite3.
 target_link_libraries(${PROJECT_NAME} 
     ${DPP_LIBRARIES}
+    SQLite::SQLite3
 )
-    
 # Include the DPP directories.
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${DPP_INCLUDE_DIR}
+    ${SQLite3_INCLUDE_DIRS}
 )
-
 target_include_directories(${PROJECT_NAME} PUBLIC
     "include/"
     "include/event_handlers"
 )
-    
 # Set C++ version
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

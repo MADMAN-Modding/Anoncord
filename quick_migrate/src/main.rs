@@ -7,12 +7,11 @@ async fn main() {
             SqliteConnectOptions::new()
                 .filename("../settings.sqlite")
                 .create_if_missing(true),
-        )
-        .await
-        .expect("Couldn't connect to database");
+        );
 
     sqlx::migrate!("../migrations")
-        .run(&database)
+        .run(&database.await
+        .expect("Couldn't connect to database"))
         .await
         .expect("Migration failed");
 }

@@ -6,7 +6,7 @@
 settings::settings()
 {
     int exit = 0;
-    exit = sqlite3_open("settings.sqlite", &this->db);
+    exit = sqlite3_open("database.sqlite", &this->db);
     if (exit)
     {
         cerr << "Error open DB " << sqlite3_errmsg(this->db) << endl;

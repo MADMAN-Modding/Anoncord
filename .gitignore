@@ -3,4 +3,4 @@ build/
 .vscode
 bot
 .cache
-settings.sqlite
+database.sqlite

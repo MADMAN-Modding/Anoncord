@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include "settings.h"
 #include "user_state.h"
 
 using namespace std;
@@ -12,8 +13,8 @@ class private_vents
 public:
     /// @brief Constructor for private_vents class
     /// @param bot Pointer to bot object
-    /// @brief Pointer to user_state hashmap
-    private_vents(dpp::cluster *bot, unordered_map<dpp::snowflake, user_state> *user_states);
+    /// @param user_states Pointer to user_state hashmap
+    private_vents(dpp::cluster *bot, unordered_map<dpp::snowflake, ::user_state> *user_states, ::settings *settings);
 
     /// @brief Sends a DM to the specified user asking if they can DM with an anonymous user
     /// @param user_id ID of the user to be DMed
@@ -45,6 +46,9 @@ private:
 
     /// @brief Pointer to user_state hashmap
     unordered_map<dpp::snowflake, user_state> *user_states;
+
+    /// @brief Point to settings object
+    ::settings *settings;
 
     /// @brief Sends a DM to the anonymous to inform that their DM request was accepted or rejected
     /// @param accepted True if excepted, false if rejected

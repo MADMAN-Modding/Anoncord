@@ -1,17 +1,18 @@
 #include "private_vents.h"
 #include "utilities.h"
 
-private_vents::private_vents(dpp::cluster *bot, unordered_map<dpp::snowflake, user_state> *user_states)
+private_vents::private_vents(dpp::cluster *bot, unordered_map<dpp::snowflake, user_state> *user_states, ::settings *settings)
 {
   this->bot = bot;
   this->user_states = user_states;
+  this->settings = settings;
 }
 
 void private_vents::send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id, string description)
 {
   // Makes the separate parts of the message
   const dpp::embed embed =
-      make_embed("You've been sent a DM request!", description, user_id);
+      make_embed("You've been sent a DM request!", description, user_id).set_footer(dpp::embed_footer("You can configure private dms with /allow_private_dm_requests"));
   const dpp::component accept_button =
       make_button("Accept DM", dpp::component_style::cos_primary,
                   "accept-dm_" + to_string(user_id) + "_" + to_string(anon_user_id));
@@ -50,15 +51,15 @@ void private_vents::typing_dm(dpp::typing_start_t event)
 
   if (this->user_states->find(user_id) != this->user_states->end())
   {
-    ::user_state state = this->user_states->at(user_id);
+    ::user_state user_state = this->user_states->at(user_id);
 
-    auto partner = state.get_partner_user_id();
+    auto partner = user_state.get_partner_user_id();
 
-    if (!(*user_states)[partner].get_notify()) {
+    if (!this->settings->get_preference(user_state.get_partner_user_id(), ::settings::settings::TYPING)) {
       return;
     }
 
-    if (state.get_user_mode() == user_state::HELPING)
+    if (user_state.get_user_mode() == user_state::HELPING)
     {
       auto embed = make_embed("Typing", "Your helper is typing\n-# alter this by using /receive_typing_notifications", dpp::colors::blue);
 
@@ -66,7 +67,7 @@ void private_vents::typing_dm(dpp::typing_start_t event)
     }
     else
     {
-      auto embed = make_embed("Typing", "Anon is typing", dpp::colors::blue);
+      auto embed = make_embed("Typing", "Anon is typing\n-# alter this by using /receive_typing_notifications", dpp::colors::blue);
 
       dm_user(this->bot, partner, embed);
     }

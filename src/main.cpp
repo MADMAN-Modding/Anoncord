@@ -27,7 +27,7 @@ int main()
    ::settings settings;
 
    // Event Objects
-   ::private_vents private_vents(&bot, &user_states);
+   ::private_vents private_vents(&bot, &user_states, &settings);
    ::button_commands button_commands(&bot, &private_vents);
    ::message_events message_events(&bot, &user_states);
    ::slash_commands slash_commands(&bot, &private_vents, &settings);

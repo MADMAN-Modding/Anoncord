@@ -17,7 +17,11 @@ public:
 private:
     /// @brief Pointer to bot object
     dpp::cluster *bot;
+
+    /// @brief Pointer to private vents object
     ::private_vents *private_vents;
+
+    /// @brief Point to settings object
     ::settings *settings;
 
     /// @brief Sends an anonymous vent

@@ -95,6 +95,11 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
 {
     dpp::snowflake user_id = get<dpp::snowflake>(event.get_parameter("user"));
 
+    if (!this->settings->get_preference(user_id, ::settings::PRIVATE_DMS)) {
+        event.reply(dpp::message("**Failed to Send Request**\nThe user does not have private dms enabled, you can ask them to enable their dms if you would like.").set_flags(dpp::m_ephemeral));
+        return;
+    }
+
     string message = get<string>(event.get_parameter("message"));
 
     dpp::snowflake anon_user_id = event.command.member.user_id;
@@ -113,7 +118,7 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
     }
     else if (user_states->find(anon_user_id) != user_states->end() && user_states->at(anon_user_id).get_user_mode() != ::user_state::NONE)
     {
-        event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent").set_flags(dpp::m_ephemeral));
+        event.reply(dpp::message("You are currently doing something, stop editing your message or close your current private vent with /end_dm").set_flags(dpp::m_ephemeral));
         return;
     }
 
@@ -155,7 +160,7 @@ void slash_commands::set_typing_option(dpp::slashcommand_t event)
 
     bool result = this->set_preference(user_id, ::settings::setting::TYPING, option);
 
-    event.reply(result ? "Successfully updated preferences" : "Failed to update preferences");
+    event.reply(dpp::message(result ? "Successfully updated preferences" : "Failed to update preferences").set_flags(dpp::m_ephemeral));
 }
 
 void slash_commands::allow_private_dms(dpp::slashcommand_t event)
@@ -165,7 +170,7 @@ void slash_commands::allow_private_dms(dpp::slashcommand_t event)
 
     bool result = this->set_preference(user_id, ::settings::setting::PRIVATE_DMS, option);
 
-    event.reply(result ? "Successfully updated preferences" : "Failed to update preferences");
+    event.reply(dpp::message(result ? "Successfully updated preferences" : "Failed to update preferences").set_flags(dpp::m_ephemeral));
 }
 
 bool slash_commands::set_preference(dpp::snowflake user_id, ::settings::setting setting, bool option)

@@ -52,10 +52,6 @@ public:
 
     void set_user_mode(user_mode mode);
 
-    void set_notify(bool notify);
-
-    bool get_notify();
-
 private:
     /// @brief ID of the user
     dpp::snowflake user_id;
@@ -71,7 +67,4 @@ private:
 
     /// @brief Channel the message being editted is in
     dpp::snowflake channel_id = 0;
-
-    /// @brief Does the user want to be notified when the other user is typing (currently stored in RAM, eventually will be in a database)
-    bool typing_notify = true;
 };

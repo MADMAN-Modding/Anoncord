@@ -13,15 +13,26 @@ src/settings.cpp
 src/event_handlers/button_commands.cpp
 src/event_handlers/message_events.cpp
 src/event_handlers/slash_commands.cpp
+src/pdm_cleaner.cpp
 )    
 # Find our pre-installed DPP package (using FindDPP.cmake).
 find_package(DPP REQUIRED)
 # Find SQLite3
 find_package(SQLite3 REQUIRED)
 # Link the pre-installed DPP package and SQLite3.
-target_link_libraries(${PROJECT_NAME} 
+
+# Use SQLite3::SQLite3 if available, fall back to SQLite::SQLite3
+if(TARGET SQLite3::SQLite3)
+    set(SQLITE_TARGET SQLite3::SQLite3)
+elseif(TARGET SQLite::SQLite3)
+    set(SQLITE_TARGET SQLite::SQLite3)
+else()
+    message(FATAL_ERROR "SQLite3 target not found")
+endif()
+
+target_link_libraries(${PROJECT_NAME}
     ${DPP_LIBRARIES}
-    SQLite3::SQLite3
+    ${SQLITE_TARGET}
 )
 # Include the DPP directories.
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -40,7 +51,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_custom_target(run_migrations
-    COMMAND cargo run --manifest-path ${CMAKE_SOURCE_DIR}/quick_migrate/Cargo.toml
+    COMMAND cargo run --release --manifest-path ${CMAKE_SOURCE_DIR}/quick_migrate/Cargo.toml
     COMMENT "Running DB migrations"
 )
 add_dependencies(${PROJECT_NAME} run_migrations)

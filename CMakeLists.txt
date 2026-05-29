@@ -21,7 +21,7 @@ find_package(SQLite3 REQUIRED)
 # Link the pre-installed DPP package and SQLite3.
 target_link_libraries(${PROJECT_NAME} 
     ${DPP_LIBRARIES}
-    SQLite::SQLite3
+    SQLite3::SQLite3
 )
 # Include the DPP directories.
 target_include_directories(${PROJECT_NAME} PRIVATE

@@ -4,3 +4,4 @@ build/
 bot
 .cache
 database.sqlite
+.DS_Store

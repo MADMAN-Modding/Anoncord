@@ -18,13 +18,9 @@ void pdm_cleaner::watch_loop()
     {
         // Open the database
         open_db(this->db);
-
-        // Check for old dms
-        auto old_pdms = find_old_dms();
-
-        // If there are old dms remove them
-        if (old_pdms.has_value())
-            remove_old(old_pdms.value());
+        
+        // Remove old dms
+        pdm_cleaner::remove_old();
 
         // Close the DB connection as it is not needed for the desired sleep time
         sqlite3_close(db);
@@ -34,11 +30,11 @@ void pdm_cleaner::watch_loop()
     }
 }
 
-void pdm_cleaner::remove_old(vector<int> old_pdms)
+void pdm_cleaner::remove_old()
 {
     const auto time = chrono::high_resolution_clock::now().time_since_epoch();
     
-    string query = format("DELETE * FROM private_dms WHERE status = {} OR time <= {}", to_underlying(::private_vents::CLOSED), (time - 60min).count());
+    string query = format("DELETE FROM private_dms WHERE status = {} OR time <= {}", to_underlying(::private_vents::CLOSED), (time - 60min).count());
 
     ::pdm_cleaner pdm;
 
@@ -48,9 +44,4 @@ void pdm_cleaner::remove_old(vector<int> old_pdms)
         cerr << "SQL Error in remove_old: " << err_msg << endl;
         sqlite3_free(err_msg);
     }
-}
-
-optional<vector<int>> pdm_cleaner::find_old_dms()
-{
-    return optional<vector<int>>();
 }

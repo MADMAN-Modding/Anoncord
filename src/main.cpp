@@ -82,7 +82,7 @@ int main()
                            private_vents.typing_dm(event);
                         } });
 
-   // thread cleaner(&::pdm_cleaner::start_watch, &pdm_cleaner);
+   thread cleaner(&::pdm_cleaner::start_watch, &pdm_cleaner);
 
    bot.start(dpp::st_wait);
 

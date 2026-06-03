@@ -27,9 +27,7 @@ private:
 
     void watch_loop();
 
-    void remove_old(vector<int> old_pdms);
-
-    optional<vector<int>> find_old_dms();
+    void remove_old();
 
     /// @brief Database pointer
     sqlite3 *db;

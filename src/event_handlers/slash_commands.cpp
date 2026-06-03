@@ -124,7 +124,7 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
 
     this->private_vents->send_dm(user_id, anon_user_id, message);
 
-    dpp::message reply("DM Request Sent to " + user + ":\n" + message);
+    dpp::message reply("Anonymous DM Request Sent to " + user + ":\n" + message);
     reply.set_flags(dpp::m_ephemeral);
 
     event.reply(reply);

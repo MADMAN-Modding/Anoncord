@@ -12,7 +12,7 @@ void private_vents::send_dm(dpp::snowflake user_id, dpp::snowflake anon_user_id,
 {
   // Makes the separate parts of the message
   const dpp::embed embed =
-      make_embed("You've been sent a anonymous DM request!", description, user_id).set_footer(dpp::embed_footer("You can configure private dms with /allow_private_dm_requests"));
+      make_embed("You've been sent an anonymous DM request!", description, user_id).set_footer(dpp::embed_footer("You can configure private dms with /allow_private_dm_requests"));
   const dpp::component accept_button =
       make_button("Accept DM", dpp::component_style::cos_primary,
                   "accept-dm_" + to_string(user_id) + "_" + to_string(anon_user_id));

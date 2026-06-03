@@ -161,7 +161,7 @@ void button_commands::reject_dm(const dpp::button_click_t &event)
     // Find the anon_user_id from using the splits
     dpp::snowflake anon_user_id = stoull(parts[2]);
 
-    event.reply(dpp::message("DM Rejected").set_flags(dpp::m_ephemeral));
+    event.reply(dpp::message("Anonymous DM Rejected").set_flags(dpp::m_ephemeral));
 
     // Send the message to the anon user that the dm was accepted
     this->private_vents->dm_rejected(user_id, anon_user_id);

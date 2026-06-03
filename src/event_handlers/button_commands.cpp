@@ -105,7 +105,7 @@ void button_commands::edit_vent(const dpp::button_click_t &event)
 
     ::user_state state(user_id, 0, user_state::EDITING, stoull(msg_id), stoull(channel_id));
 
-    (*user_states)[user_id] = state;
+    user_states->insert_or_assign(user_id, state);
 }
 
 void button_commands::accept_dm(const dpp::button_click_t &event)
@@ -134,12 +134,8 @@ void button_commands::accept_dm(const dpp::button_click_t &event)
         return;
     }
 
-    // Make a user_state object and then set or add it to the hashmap
-    ::user_state user_state(user_id, anon_user_id, ::user_state::HELPING);
-    ::user_state anon_user_state(anon_user_id, user_id, ::user_state::VENTING);
-
-    this->private_vents->get_user_states()->insert_or_assign(user_id, user_state);
-    this->private_vents->get_user_states()->insert_or_assign(anon_user_id, anon_user_state);
+    this->private_vents->get_user_states()->at(anon_user_id).set_user_mode(::user_state::VENTING);
+    this->private_vents->get_user_states()->at(user_id).set_user_mode(::user_state::HELPING);
 
     event.reply(dpp::message("DM Accepted").set_flags(dpp::m_ephemeral));
 

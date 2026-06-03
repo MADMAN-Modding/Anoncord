@@ -1,4 +1,6 @@
 #include "utilities.h"
+#include <random>
+#include <limits>
 
 dpp::embed make_embed(string title, string description,
                       uint32_t color)
@@ -56,4 +58,24 @@ void dm_user(dpp::cluster *bot, dpp::snowflake id, dpp::message message)
 void dm_user(dpp::cluster *bot, dpp::snowflake id, string message)
 {
   dm_user(bot, id, dpp::message(message));
+}
+
+int open_db(sqlite3 *&db)
+{
+  int exit = 0;
+  exit = sqlite3_open("database.sqlite", &db);
+  if (exit)
+  {
+    cerr << "Error open DB " << sqlite3_errmsg(db) << endl;
+  }
+
+  return exit;
+}
+
+int64_t gen_pdm_id()
+{
+  unsigned long seed = std::time(nullptr);
+  std::default_random_engine rng(seed);
+  std::uniform_int_distribution<long long int> dist(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max());
+  return dist(rng);
 }

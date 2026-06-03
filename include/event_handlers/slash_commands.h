@@ -8,7 +8,7 @@ public:
     /// @brief Constructor for slash_commands
     /// @param bot Pointer to bot object
     /// @param private_vents Point to private_vents object
-    slash_commands(dpp::cluster *bot, ::private_vents *private_vents_obj, ::settings *settings);
+    slash_commands(dpp::cluster *bot, ::private_vents *private_vents_obj, ::settings *settings, std::unordered_map<dpp::snowflake, user_state> *user_states);
 
     /// @brief Determines which function to call when a slashcommand is received
     /// @param event Event trigger with command info
@@ -23,6 +23,9 @@ private:
 
     /// @brief Point to settings object
     ::settings *settings;
+
+    /// @brief user_states Pointer to hashmap of user_state objects
+    std::unordered_map<dpp::snowflake, user_state> *user_states;
 
     /// @brief Sends an anonymous vent
     /// @param event Event trigger with the command info

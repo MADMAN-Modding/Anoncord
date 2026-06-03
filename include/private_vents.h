@@ -11,6 +11,14 @@ using namespace std;
 class private_vents
 {
 public:
+    /// @brief Status of a PDM
+    enum pdm_status {
+        CREATED,
+        ACCEPTED,
+        REJECTED,
+        CLOSED
+    };
+
     /// @brief Constructor for private_vents class
     /// @param bot Pointer to bot object
     /// @param user_states Pointer to user_state hashmap

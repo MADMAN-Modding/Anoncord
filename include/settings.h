@@ -3,6 +3,7 @@
 #include <sqlite3.h>
 #include <optional>
 #include <unordered_map>
+#include <chrono>
 
 #include "user_state.h"
 
@@ -15,7 +16,8 @@ public:
     { 
         dpp::snowflake user_id;
         bool typing_notifications = true;
-        bool allow_private_dms = true; 
+        bool allow_private_dms = true;
+        std::chrono::system_clock::time_point last_accessed = std::chrono::system_clock::now();
     };
 
     /// @brief Settings available to set in the database
@@ -53,9 +55,12 @@ private:
     /// @return Void, writes to the cached_user_settings map
     void get_user_settings(dpp::snowflake user_id);
 
+    /// @brief Evict old cache entries older than 24 hours
+    void evict_old_cache();
+
     /// DB Pointer
     sqlite3* db;
 
-    /// @brief Pointer to user_state hashmap
+    /// @brief User settings cache with LRU eviction
     unordered_map<dpp::snowflake, user_settings> cached_user_settings;
 };

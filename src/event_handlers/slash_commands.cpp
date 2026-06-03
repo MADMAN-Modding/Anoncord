@@ -1,12 +1,14 @@
 #include "slash_commands.h"
 #include "utilities.h"
 #include "settings.h"
+#include "pdm_cleaner.h"
 
-slash_commands::slash_commands(dpp::cluster *bot, ::private_vents *private_vents, ::settings *settings)
+slash_commands::slash_commands(dpp::cluster *bot, ::private_vents *private_vents, ::settings *settings, std::unordered_map<dpp::snowflake, user_state> *user_states)
 {
     this->bot = bot;
     this->private_vents = private_vents;
     this->settings = settings;
+    this->user_states = user_states;
 }
 
 void slash_commands::on_slash_command(dpp::slashcommand_t event)
@@ -54,7 +56,7 @@ void slash_commands::anon_vent(dpp::slashcommand_t event)
 
     // Make the message from the channel_id and embed
     dpp::message vent = dpp::message(event.command.channel_id, embed);
-
+    
     // Create the message and then send a dm to the user
     this->bot->message_create(vent, [this, event, msg](const dpp::confirmation_callback_t &callback)
                               {                    
@@ -122,6 +124,32 @@ void slash_commands::private_dm(dpp::slashcommand_t event)
         return;
     }
 
+    const int64_t pdm_id = gen_pdm_id();
+
+    const auto time = chrono::high_resolution_clock::now().time_since_epoch().count();
+
+    const private_vents::pdm_status status = private_vents::CREATED;
+
+    sqlite3 *db;
+    open_db(db);
+
+    string query = format("INSERT INTO private_dms (pdm_id, time, status) VALUES ({}, {}, {})", pdm_id, time, to_underlying(status));
+
+    char *err_msg[1024];
+
+    int rc = sqlite3_exec(db, query.c_str(), NULL, NULL, err_msg);
+
+    if (rc != SQLITE_OK) {
+        cout << *err_msg << "\n";
+        cout << "SQLITE ERROR: " << rc << endl;
+    }
+
+    user_state anon_user_state(anon_user_id, user_id, user_state::NONE, pdm_id);
+    user_state user_state(user_id, anon_user_id, user_state::NONE, pdm_id);
+
+    user_states->insert_or_assign(anon_user_id, anon_user_state);
+    user_states->insert_or_assign(user_id, user_state);
+
     this->private_vents->send_dm(user_id, anon_user_id, message);
 
     dpp::message reply("Anonymous DM Request Sent to " + user + ":\n" + message);
@@ -145,12 +173,28 @@ void slash_commands::end_dm(dpp::slashcommand_t event)
         dpp::snowflake partner_id = state.get_partner_user_id();
 
         (*user_states)[user_id] = state;
+        
+        int64_t pdm_id = user_states->at(user_id).get_pdm_id();
 
-        event.reply(dpp::message("DM found, it has been ended").set_flags(dpp::m_ephemeral));
+        sqlite3 *db;
+        open_db(db);
+
+        string query = format("UPDATE private_dms SET status = {} WHERE pdm_id = {}", to_underlying(::private_vents::CLOSED), pdm_id);
+
+        char *err_msg = nullptr;
+        int rc = sqlite3_exec(db, query.c_str(), NULL, 0, &err_msg);
+        if (rc != SQLITE_OK)
+        {
+            cerr << "SQL Error in end_dm: " << err_msg << endl;
+            sqlite3_free(err_msg);
+        }
+
+
+        event.reply(dpp::message("Anonymous DM found, it has been ended").set_flags(dpp::m_ephemeral));
         return;
     }
 
-    event.reply(dpp::message("No private DM session was found.").set_flags(dpp::m_ephemeral));
+    event.reply(dpp::message("No anonymous DM session was found.").set_flags(dpp::m_ephemeral));
 }
 
 void slash_commands::set_typing_option(dpp::slashcommand_t event)

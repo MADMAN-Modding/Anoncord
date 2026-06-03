@@ -1,6 +1,8 @@
 #pragma once
 #include <dpp/dpp.h>
 #include <iostream>
+#include <sqlite3.h>
+#include <uuid/uuid.h>
 
 using namespace std;
 
@@ -47,3 +49,10 @@ void dm_user(dpp::cluster *bot, dpp::snowflake id, dpp::message message);
 /// @param id ID of user to message
 /// @param message Message to send
 void dm_user(dpp::cluster *bot, dpp::snowflake id, string message);
+
+/// @brief Open sqlite database at the desired path
+/// @param db Database pointer
+/// @return Received status code
+int open_db(sqlite3 *&db);
+
+int64_t gen_pdm_id();

@@ -55,7 +55,8 @@ void private_vents::typing_dm(dpp::typing_start_t event)
 
     auto partner = user_state.get_partner_user_id();
 
-    if (!this->settings->get_preference(user_state.get_partner_user_id(), ::settings::settings::TYPING)) {
+    if (!this->settings->get_preference(user_state.get_partner_user_id(), ::settings::settings::TYPING))
+    {
       return;
     }
 
@@ -85,6 +86,23 @@ void private_vents::response_dm(bool accepted, dpp::snowflake user_id, dpp::snow
   dpp::embed embed;
   embed = make_embed("Requested " + status_text + "!", user + str_to_lower(status_text) + " your request!",
                      color);
+
+  pdm_status status = accepted ? ACCEPTED : REJECTED;
+
+  int64_t pdm_id = user_states->at(user_id).get_pdm_id();
+
+  string query = format("UPDATE private_dms SET status = {} WHERE pdm_id = {}", to_underlying(status), pdm_id);
+
+  sqlite3 *db;
+  open_db(db);
+
+  char *err_msg = nullptr;
+  int rc = sqlite3_exec(db, query.c_str(), NULL, 0, &err_msg);
+  if (rc != SQLITE_OK)
+  {
+    cerr << "SQL Error in response_dm: " << err_msg << endl;
+    sqlite3_free(err_msg);
+  }
 
   // Makes the message to be sent
   dpp::message message;

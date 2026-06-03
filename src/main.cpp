@@ -7,6 +7,7 @@
 #include "user_state.h"
 #include "utilities.h"
 #include "settings.h"
+#include "pdm_cleaner.h"
 
 // Event Classes
 #include "button_commands.h"
@@ -26,11 +27,14 @@ int main()
    // Settings
    ::settings settings;
 
+   // PDM Cleaner
+   ::pdm_cleaner pdm_cleaner;
+
    // Event Objects
    ::private_vents private_vents(&bot, &user_states, &settings);
    ::button_commands button_commands(&bot, &private_vents);
    ::message_events message_events(&bot, &user_states);
-   ::slash_commands slash_commands(&bot, &private_vents, &settings);
+   ::slash_commands slash_commands(&bot, &private_vents, &settings, &user_states);
 
    bot.on_log(dpp::utility::cout_logger());
 
@@ -77,6 +81,8 @@ int main()
                         if (event.typing_channel.owner_id == 0) {
                            private_vents.typing_dm(event);
                         } });
+
+   // thread cleaner(&::pdm_cleaner::start_watch, &pdm_cleaner);
 
    bot.start(dpp::st_wait);
 

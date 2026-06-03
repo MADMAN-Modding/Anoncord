@@ -7,6 +7,14 @@ user_state::user_state(dpp::snowflake user_id, dpp::snowflake partner_user_id, u
     this->mode = mode;
 }
 
+user_state::user_state(dpp::snowflake user_id, dpp::snowflake partner_user_id, user_mode mode, int64_t pdm_id)
+{
+    this->user_id = user_id;
+    this->partner_user_id = partner_user_id;
+    this->mode = mode;
+    this->pdm_id = pdm_id;
+}
+
 user_state::user_state(dpp::snowflake user_id, dpp::snowflake partner_user_id, user_mode mode, dpp::snowflake message_id, dpp::snowflake channel_id)
 {
     this->user_id = user_id;
@@ -44,4 +52,9 @@ dpp::snowflake user_state::get_channel_id()
 void user_state::set_user_mode(user_mode mode)
 {
     this->mode = mode;
+}
+
+int64_t user_state::get_pdm_id()
+{
+    return this->pdm_id;
 }

@@ -76,7 +76,7 @@ void slash_commands::anon_vent(dpp::slashcommand_t event)
                 event.reply(reply_msg);
 
                 // Direct message with delete button
-                dpp::embed direct_embed = make_embed("Anoncord Message Services", "If you'd like to delete or your vent, use the button below:\n" + msg, dpp::colors::red_blood);
+                dpp::embed direct_embed = make_embed("Anoncord Message Services", "If you'd like to delete or edit your vent, use the button below:\n" + msg, dpp::colors::red_blood);
 
                 // Make the delete button
                 dpp::component delete_button = make_button("Delete Message", dpp::cos_danger, "delete_" + std::to_string(vent_id) + "_" + std::to_string(event.command.channel_id));
